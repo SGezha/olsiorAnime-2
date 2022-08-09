@@ -1,0 +1,99 @@
+{
+  "kind": "collectionType",
+  "collectionName": "animes",
+  "info": {
+    "singularName": "anime",
+    "pluralName": "animes",
+    "displayName": "Anime",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {}
+    },
+    "watched": {
+      "type": "boolean",
+      "pluginOptions": {}
+    },
+    "background": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "pluginOptions": {}
+    },
+    "poster": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "pluginOptions": {}
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {}
+    },
+    "arches": {
+      "type": "text",
+      "pluginOptions": {}
+    },
+    "genres": {
+      "type": "json",
+      "pluginOptions": {}
+    },
+    "seasons": {
+      "type": "json",
+      "pluginOptions": {}
+    },
+    "op": {
+      "type": "json",
+      "pluginOptions": {}
+    },
+    "ed": {
+      "type": "json",
+      "pluginOptions": {}
+    },
+    "episodes": {
+      "type": "json",
+      "pluginOptions": {}
+    },
+    "nowepisode": {
+      "type": "integer",
+      "pluginOptions": {}
+    },
+    "maxepisodes": {
+      "type": "integer",
+      "pluginOptions": {}
+    },
+    "stars": {
+      "pluginOptions": {},
+      "type": "integer"
+    },
+    "date": {
+      "pluginOptions": {},
+      "type": "date"
+    },
+    "url": {
+      "type": "string"
+    },
+    "anime": {
+      "type": "uid",
+      "targetField": "url"
+    }
+  }
+}
