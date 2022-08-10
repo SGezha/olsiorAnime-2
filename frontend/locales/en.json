@@ -7,5 +7,13 @@
     "autonext": "Autoplay",
     "chat": "Chat",
     "pip": "Picture in picture",
-    "film": "Film"
+    "film": "Film",
+    "telegramlink": "Open in telegram",
+    "desc": "Description",
+    "info": "Information",
+    "comments": "Comments",
+    "arches": "Arches",
+    "op": "Openings",
+    "ed": "Endings",
+    "seasons": "Related"
 }

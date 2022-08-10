@@ -16,7 +16,7 @@ defineProps({
     <NuxtLink :to="`watch/${card.url}`"
         class="w-100 showAnimation relative will-change-transform transition-transform hover:scale-[102%]">
         <div class="card rounded-md">
-            <figure class="w-100 h-[360px]">
+            <figure class="w-100 h-[30vh] md:h-[360px]">
                 <img class="w-full h-full object-cover"
                     :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" alt="Shoes" />
             </figure>

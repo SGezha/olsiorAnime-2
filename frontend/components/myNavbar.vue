@@ -2,30 +2,12 @@
     <div class="bg-base-300 bg-opacity-50 z-10 relative">
         <div class="navbar max-w-[1350px] mx-auto">
             <div class="navbar-start">
-                <div class="dropdown relative">
-                    <label tabindex="0" class="btn btn-ghost btn-circle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h7" />
-                        </svg>
-                    </label>
-                    <div tabindex="0"
-                        class="flex flex-col dropdown-content mt-3 p-3 shadow bg-base-300 gap-3 rounded-box w-100">
-                        <div class="btn btn-ghost text-left justify-start">
-                            <NuxtLink to="/">Homepage</NuxtLink>
-                        </div>
-                        <div class="btn btn-ghost text-left justify-start">
-                            <NuxtLink>Portfolio</NuxtLink>
-                        </div>
-                        <div class="btn btn-ghost text-left justify-start">
-                            <NuxtLink>About</NuxtLink>
-                        </div>
+                <a class="btn btn-ghost normal-case text-xl flex gap-[10px] items-center" href="/">
+                    <img src="/minloading.webp" class="rounded-full overflow-hidden w-[30px]" alt="">
+                    <div class="mb-[3px]">
+                        {{ $t('title') }}
                     </div>
-                </div>
-            </div>
-            <div class="navbar-center">
-                <a class="btn btn-ghost normal-case text-xl" href="/">{{ $t('title') }}</a>
+                </a>
             </div>
             <div class="navbar-end">
                 <div class="dropdown dropdown-end">
