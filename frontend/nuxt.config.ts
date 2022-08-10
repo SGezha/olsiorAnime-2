@@ -16,11 +16,13 @@ export default defineNuxtConfig({
         cookieName: 'strapi_jwt'
     },
     runtimeConfig: {
-        apiSecret: '123',
         public: {
             apiBase: process.env.API
         }
     },
+    serverMiddleware: [
+        { path: "/server-api", handler: "~/server-middleware/index.js" },
+    ],
     colorMode: {
         dataValue: 'theme'
     },
