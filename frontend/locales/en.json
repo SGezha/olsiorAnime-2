@@ -15,5 +15,11 @@
     "arches": "Arches",
     "op": "Openings",
     "ed": "Endings",
-    "seasons": "Related"
+    "seasons": "Related",
+    "comhelp": "To send a comment,",
+    "comauth": "log in",
+    "comtext": "Post a comment",
+    "comsend": "Send",
+    "logout": "Logout",
+    "login": "Login"
 }

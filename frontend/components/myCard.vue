@@ -18,7 +18,7 @@ defineProps({
         <div class="card rounded-md">
             <figure class="w-100 h-[30vh] md:h-[360px]">
                 <img class="w-full h-full object-cover"
-                    :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" alt="Shoes" />
+                    :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" :alt="card.title" />
             </figure>
             <div
                 class="date glass font-medium w-fit absolute text-primary-content top-[10px] left-[10px] rounded-md px-[5px]">
@@ -54,7 +54,7 @@ defineProps({
 
 <style>
 .showAnimation {
-    animation: showCard 0.5s ease-in-out;
+    animation: showCard 0.25s ease-in-out;
 }
 
 @keyframes showCard {

@@ -21,7 +21,7 @@ const load = useState(() => false)
             <img class="w-full object-cover object-center h-[800px] max-h-[800px]"
                 :src="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" alt="">
         </div>
-        <div class="max-w-[1350px] mx-auto px-[10px] md:py-[20px] min-h-screen">
+        <div class="max-w-[1350px] mx-auto px-[10px] pb-[50px] md:py-[20px] min-h-screen">
             <div class="flex flex-col pt-[30px] gap-[30px] md:gap-[50px] md:flex-row">
                 <div class="w-full md:w-[300px] md:min-w-[300px]">
                     <div class="block mb-[20px] md:hidden">
@@ -41,6 +41,8 @@ const load = useState(() => false)
                     <WatchDesc :anime="anime.data[0]" />
 
                     <WatchInfo :anime="anime.data[0]" />
+
+                    <WatchComents :url="router.currentRoute._value.params.name" />
                 </div>
             </div>
         </div>
@@ -54,7 +56,7 @@ const load = useState(() => false)
 }
 
 .showBg {
-    animation: showBg 0.5s ease-in-out;
+    animation: showBg 0.25s ease-in-out;
     top: -64px;
 }
 

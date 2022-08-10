@@ -51,7 +51,11 @@ const changeEpisode = (id, autoplay) => {
             hls.loadSource(props.anime.attributes.episodes[current.value].hls)
             hls.attachMedia(document.querySelector('video'))
             if(autoplay) document.querySelector('video').play()
-            if (props.anime.attributes.episodes[current.value].chat) getChat()
+            if (props.anime.attributes.episodes[current.value].chat) {
+                getChat()
+            } else {
+                chatShow.value = false
+            }
         } else {
             video.value.src = props.anime.attributes.episodes[current.value].hls
         }
