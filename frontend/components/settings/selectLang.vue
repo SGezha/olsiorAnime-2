@@ -2,9 +2,9 @@
     <div class="hidden">{{$i18n.locale}}</div>
     <form>
         <select id="locale-select" @change="updateLanguage" class="select select-sm" ref="lang" v-model="$i18n.locale">
-            <option value="en">🇺🇸</option>
             <option value="ru">🇷🇺</option>
             <option value="uk">🇺🇦</option>
+            <option value="en">🇺🇸</option>
         </select>
     </form>
 </template>

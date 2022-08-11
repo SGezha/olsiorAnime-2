@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-<div class="mt-[30px]">
+<div v-if="anime.attributes.description != null" class="mt-[30px]">
         <div class="font-bold text-2xl">{{ $t('desc') }}</div>
         <div class="mt-[15px]" v-html="anime.attributes.description.split('\\n').join('<br/>')"></div>
     </div>

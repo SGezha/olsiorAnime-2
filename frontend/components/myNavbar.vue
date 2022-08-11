@@ -35,7 +35,7 @@ const logout = () => {
                         <SettingsSelectLang />
                     </ul>
                 </div>
-                <a class="btn btn-ghost btn-circle">
+                <a href="https://www.donationalerts.com/r/sgezha" target="_blank" class="btn btn-ghost btn-circle">
                     <img class="w-[36px] h-[36px] bg-neutral rounded-full" src="/gift-1.gif" alt="">
                 </a>
                 <div class="dropdown dropdown-end">

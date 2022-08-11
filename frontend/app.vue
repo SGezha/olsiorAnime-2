@@ -1,9 +1,9 @@
 <template>
   <div class="bg-base-200 main-bg">
-    <NuxtLoadingIndicator />
     <MyNavbar />
-    <NuxtPage />
-    
+    <div class="">
+      <NuxtPage />
+    </div>
   </div>
 </template>
 
@@ -23,31 +23,31 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #e1e1e1;
+  background:  hsla(var(--p) / 1);
   border: 0px none #ffffff;
   border-radius: 50px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #ffffff;
+  background:  hsla(var(--n) / 0.5);
 }
 
 *::-webkit-scrollbar-thumb:active {
-  background: hlsa(var(--p) / 0.15);
+  background: hsla(var(--p) / 1);
 }
 
 *::-webkit-scrollbar-track {
-  background: #666666;
+  background: hsla(var(--n) / 1);
   border: 0px none #ffffff;
   border-radius: 50px;
 }
 
 *::-webkit-scrollbar-track:hover {
-  background: #666666;
+  background: hsla(var(--n) / 0.5);
 }
 
 *::-webkit-scrollbar-track:active {
-  background: #333333;
+  background: hsla(var(--n) / 0.5);
 }
 
 *::-webkit-scrollbar-corner {

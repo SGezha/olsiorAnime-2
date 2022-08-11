@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "donates",
+  "info": {
+    "singularName": "donate",
+    "pluralName": "donates",
+    "displayName": "donate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "username": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "integer"
+    }
+  }
+}

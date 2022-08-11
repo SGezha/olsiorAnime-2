@@ -33,7 +33,7 @@ const deleteCom = async (id) => {
         <div class="" v-if="twName">
             <div class="text-lg">{{ $t('comtext') }}</div>
             <div v-if="twName" class="flex gap-[10px]">
-                <input v-model="msg" type="text" class="input input-primary input-bordered w-full" />
+                <input v-model="msg" @keydown.enter="sendCom" type="text" class="input input-primary input-bordered w-full" />
                 <button @click="sendCom" class="btn btn-primary">{{ $t('comsend') }}</button>
             </div>
         </div>

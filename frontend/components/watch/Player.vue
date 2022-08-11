@@ -1,5 +1,5 @@
 <script setup>
-import { useMediaControls } from '@vueuse/core'
+import { useMediaControls, useElementBounding } from '@vueuse/core'
 import Hls from 'hls.js'
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -79,6 +79,7 @@ const endBuffer = computed(() => buffered.value.length > 0 ? buffered.value[buff
 const formatDuration = (seconds) => new Date(1000 * seconds).toISOString().slice(12, 19)
 
 const nowChat = useState(() => [])
+
 watch(currentTime, (val) => {
     let now = parseInt(val)
     localStorage.setItem(router.currentRoute._value.params.name, JSON.stringify({
@@ -90,7 +91,7 @@ watch(currentTime, (val) => {
         let temp = chat.value.filter(a => a.time.timesec < now)
         nowChat.value = temp.slice(0, 200)
         setTimeout(() => {
-            if (chatShow) document.querySelector('.chat').scrollTo({ top: document.querySelector('.chat').scrollHeight })
+            if (chatShow && document.querySelector('.chat')) document.querySelector('.chat').scrollTo({ top: document.querySelector('.chat').scrollHeight })
         }, 50)
     }
 })
@@ -151,19 +152,25 @@ const getRandomColor = () => {
     return color;
 }
 
+const scruWidth = ref(null)
+const { width: timeMarksWidth } = useElementBounding(scruWidth)
 const timeMarkPosition = () => {
+    document.querySelector('.video-menu').style.width = "100.1%"
     let timeMarks = document.querySelectorAll('.timeMark')
     timeMarks.forEach(m => {
         let left = calcMarkLeft(m.dataset.duration, m.dataset.time)
-        m.style.left = `calc(${left}% - ${m.offsetWidth}px)`
+        m.style.left = `calc(${left}% - ${m.offsetWidth / 2}px)`
     })
     timeMarkLoaded.value = true
+    setTimeout(() => {
+        document.querySelector('.video-menu').style.width = "100%"   
+    }, 100)
 }
 
 const calcMarkLeft = (videoDuration, markTime) => {
     let markSec = markTime.split(':').reverse().reduce((prev, curr, i) => prev + curr*Math.pow(60, i), 0)
     let leftMark = percentage(markSec, videoDuration)
-    return leftMark.toFixed(0)
+    return leftMark
 }
 
 const percentage = (partialValue, totalValue) => {
@@ -188,7 +195,7 @@ const formatTime = (duration) => {
     <div class="mt-[10px] transition">
         <div class="outline-none relative" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
             @keydown.prevent.space="playing = !playing" @keydown.right="currentTime += 5"
-            @keydown.left="currentTime -= 5" ref="player">
+            @keydown.left="currentTime -= 5" @keydown.f="toggle()" @keydown.m="muted = !muted" ref="player">
             <div class="relative bg-black rounded-md shadow overflow-hidden  flex items-center"
                 :class="{ 'h-screen w-screen rounded-none': isFullscreen, 'h-[50vh] min-h-[50vh] w-100 max-h-[50vh]': !isFullscreen }">
 
@@ -213,14 +220,14 @@ const formatTime = (duration) => {
                 </div>
                 
                 <client-only>
-                    <div class="absolute bottom-0 bg-neutral bg-opacity-70 video-menu w-[100%] p-[20px] min-w-100 h-[100px] transition-transform"
+                    <div class="absolute video-menu bottom-0 bg-neutral bg-opacity-70 video-menu w-[100%] p-[20px] h-[100px] transition-transform"
                         :class="{ 'translate-y-[110px]': isOutside || idle, 'pt-[30px] h-[110px]': anime.attributes.episodes[current].timeMark }">
 
-                        <div v-if="anime.attributes.episodes[current].timeMark" class="absolute top-[5px] flex w-full text-sm text-neutral-content">
-                            <div v-for="(mark, ind) in anime.attributes.episodes[current].timeMark" :class="{ 'tooltip-open': timeMarkLoaded}" class="timeMark tooltip tooltip-primary top-[24px] px-[5px] text-sm text-[rgba(0,0,0,0)] select-none" :data-tip="mark.title" :data-duration="duration" :data-time="mark.time">{{ mark.title }}</div>
+                        <div v-if="anime.attributes.episodes[current].timeMark" class="absolute top-[5px] flex w-full text-sm text-neutral-content" :style="{ width: `${timeMarksWidth.toFixed(0)}px`}">
+                            <div v-for="(mark, ind) in anime.attributes.episodes[current].timeMark" :class="{ 'tooltip-open': timeMarkLoaded }" class="absolute timeMark tooltip tooltip-primary top-[24px] px-[5px] text-sm text-[rgba(0,0,0,0)] select-none" :data-tip="mark.title" :data-duration="duration" :data-time="mark.time">{{ mark.title }}</div>
                         </div>
 
-                        <VideoScrubber v-model="currentTime" :max="duration" :secondary="endBuffer">
+                        <VideoScrubber v-model="currentTime" ref="scruWidth" :max="duration" :secondary="endBuffer">
                             <template #default="{ position, pendingValue }">
                                 <div class="absolute transform tooltip tooltip-open -translate-x-1/2 tooltip-primary rounded bottom-[9px] px-[5px] text-sm text-white" :style="{ left: position }" :data-tip="formatDuration(pendingValue)">
                                 </div>
@@ -500,6 +507,7 @@ const formatTime = (duration) => {
 .tooltip::before {
     font-size: inherit;
     padding: inherit;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
 </style>

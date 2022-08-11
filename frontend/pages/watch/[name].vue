@@ -3,50 +3,60 @@ const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
 const { pending, data: anime } = useAsyncData('anime', () => find('animes', { populate: '*', filters: { url: router.currentRoute._value.params.name } }))
-const load = useState(() => false)
-
+const loadAnime = useState(() => false)
+onMounted(() => {
+    loadAnime.value = true
+})
 </script>
 
 <template>
-    <div v-if="!pending" class="">
-        <Head>
-            <Title>{{ `${anime.data[0].attributes.title.split("/")[0]} - Олсиор смотрит аниме` }}</Title>
-            <Meta name="og-title" hid="og-title" property="og:title" :content="anime.data[0].attributes.title" />
-            <Meta name="description" hid="description" :content="anime.data[0].attributes.description" />
-            <Meta name="og:description" hid="og:description" property="og:description" :content="anime.data[0].attributes.description" />
-            <Meta v-if="anime.data[0].attributes.background.data != null" name="og:image" hid="og:image" property="og:image" :content="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" />
-        </Head>
-        <div v-if="anime.data[0].attributes.background.data != null"
-            class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
-            <img class="w-full object-cover object-center h-[800px] max-h-[800px]"
-                :src="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" alt="">
+    <div class="">
+        <div v-if="!loadAnime" class="absolute top-0 left-0 w-screen h-screen bg-neutral z-50 flex justify-center items-center">
+            <img src="/loading.gif" class="rounded-full w-[100px]" alt="">
         </div>
-        <div class="max-w-[1350px] mx-auto px-[10px] pb-[50px] md:py-[20px] min-h-screen">
-            <div class="flex flex-col pt-[30px] gap-[30px] md:gap-[50px] md:flex-row">
-                <div class="w-full md:w-[300px] md:min-w-[300px]">
-                    <div class="block mb-[20px] md:hidden">
-                        <WatchTitle :anime="anime.data[0]" />
+        <div v-if="!pending && loadAnime" class="">
+            <Head>
+                <Title>{{ `${anime.data[0].attributes.title.split("/")[0]} - Олсиор смотрит аниме` }}</Title>
+                <Meta name="og-title" hid="og-title" property="og:title" :content="anime.data[0].attributes.title" />
+                <Meta name="description" hid="description" :content="anime.data[0].attributes.description" />
+                <Meta name="og:description" hid="og:description" property="og:description" :content="anime.data[0].attributes.description" />
+                <Meta v-if="anime.data[0].attributes.background.data != null" name="og:image" hid="og:image" property="og:image" :content="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" />
+            </Head>
+            <div v-if="anime.data[0].attributes.background.data != null"
+                class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
+                <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]"
+                    :src="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" alt="">
+            </div>
+            <div class="max-w-[1350px] mx-auto px-[10px] pb-[50px] md:py-[20px] min-h-screen">
+                <div class="flex flex-col pt-[30px] gap-[30px] md:gap-[50px] md:flex-row">
+                    <div class="w-full md:w-[300px] md:min-w-[300px]">
+                        <div class="block mb-[20px] md:hidden">
+                            <WatchTitle :anime="anime.data[0]" />
+                        </div>
+                        <img class="object-cover rounded-md w-full showAnimation shadow-lg"
+                            :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`" alt="">
+                        
+                        <WatchAnimeInfo :anime="anime.data[0]" />
                     </div>
-                    <img class="object-cover rounded-md w-full showAnimation shadow-lg"
-                        :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`" alt="">
-                    
-                    <WatchAnimeInfo :anime="anime.data[0]" />
-                </div>
 
-                <div class="relative w-full showAnimation">
-                    <div class="hidden md:block">
-                        <WatchTitle :anime="anime.data[0]" />
+                    <div class="relative w-full showAnimation">
+                        <div class="hidden md:block">
+                            <WatchTitle :anime="anime.data[0]" />
+                        </div>
+
+                        <WatchPlayer :anime="anime.data[0]" />
+
+                        <WatchDesc :anime="anime.data[0]" />
+
+                        <WatchInfo :anime="anime.data[0]" />
+
+                        <WatchComents :url="router.currentRoute._value.params.name" />
                     </div>
-
-                    <WatchPlayer :anime="anime.data[0]" />
-
-                    <WatchDesc :anime="anime.data[0]" />
-
-                    <WatchInfo :anime="anime.data[0]" />
-
-                    <WatchComents :url="router.currentRoute._value.params.name" />
                 </div>
             </div>
+        </div>
+        <div v-if="!pending && loadAnime">
+            <MyFooter />
         </div>
     </div>
 </template>
@@ -58,8 +68,7 @@ const load = useState(() => false)
 }
 
 .showBg {
-    animation: showBg 0.25s ease-in-out;
-    top: -64px;
+    animation: showBg 2s ease;
 }
 
 .active {
@@ -102,15 +111,27 @@ const load = useState(() => false)
     /* scroll-behavior: smooth; */
 }
 
-@keyframes showBg {
+.showLoading {
+    /* animation: showlg 0.25s ease-in-out; */
+}
+
+@keyframes showlg {
     from {
         opacity: 0;
-        top: -80px;
     }
 
     to {
         opacity: 1;
-        top: -64px;
+    }
+}
+
+@keyframes showBg {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
 </style>

@@ -26,5 +26,10 @@
     "status": "Статус перегляду",
     "epwached": "Переглянуті серії",
     "watcheddate": "Дата перегляду",
-    "genres": "Жанр"
+    "genres": "Жанр",
+    "search": "Пошук",
+    "sortdate": "Дате",
+    "sortstars": "Оцінка",
+    "sortep": "Серія",
+    "donate": "Топ донатеров"
 }

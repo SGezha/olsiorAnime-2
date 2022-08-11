@@ -26,5 +26,10 @@
     "status": "Viewing status",
     "epwached": "Viewed Episodes",
     "watcheddate": "Viewing date",
-    "genres": "Genres"
+    "genres": "Genres",
+    "search": "Search",
+    "sortdate": "Date",
+    "sortstars": "Stars",
+    "sortep": "Series",
+    "donate": "Top donate"
 }
