@@ -7,6 +7,13 @@ const loadAnime = useState(() => false)
 onMounted(() => {
     loadAnime.value = true
 })
+
+const WatchTitle = defineAsyncComponent(() => import('~/components/watch/Title'))
+const WatchAnimeInfo = defineAsyncComponent(() => import('~/components/watch/AnimeInfo'))
+const WatchPlayer = defineAsyncComponent(() => import('~/components/watch/Player'))
+const WatchDesc = defineAsyncComponent(() => import('~/components/watch/Desc'))
+const WatchInfo = defineAsyncComponent(() => import('~/components/watch/Info'))
+const WatchComents = defineAsyncComponent(() => import('~/components/watch/Coments'))
 </script>
 
 <template>
@@ -31,26 +38,26 @@ onMounted(() => {
                 <div class="flex flex-col pt-[30px] gap-[30px] md:gap-[50px] md:flex-row">
                     <div class="w-full md:w-[300px] md:min-w-[300px]">
                         <div class="block mb-[20px] md:hidden">
-                            <WatchTitle :anime="anime.data[0]" />
+                            <watch-title :anime="anime.data[0]" />
                         </div>
                         <img class="object-cover rounded-md w-full showAnimation shadow-lg"
                             :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`" alt="">
                         
-                        <WatchAnimeInfo :anime="anime.data[0]" />
+                        <watch-anime-info :anime="anime.data[0]" />
                     </div>
 
                     <div class="relative w-full showAnimation">
                         <div class="hidden md:block">
-                            <WatchTitle :anime="anime.data[0]" />
+                            <watch-title :anime="anime.data[0]" />
                         </div>
 
-                        <WatchPlayer :anime="anime.data[0]" />
+                        <watch-player :anime="anime.data[0]" />
 
-                        <WatchDesc :anime="anime.data[0]" />
+                        <watch-desc :anime="anime.data[0]" />
 
-                        <WatchInfo :anime="anime.data[0]" />
+                        <watch-info :anime="anime.data[0]" />
 
-                        <WatchComents :url="router.currentRoute._value.params.name" />
+                        <watch-coments :url="router.currentRoute._value.params.name" />
                     </div>
                 </div>
             </div>

@@ -51,7 +51,7 @@ const searchAnime = () => {
                 <div class="input-group relative w-full lg:w-auto">
                     <input v-model="searchQuery" @change="searchAnime" type="text" :placeholder="`${$t('search')}...`"
                         class="input input-bordered w-full lg:w-[400px] lg:max-w-[400px]" />
-                    <button @click="searchAnime" class="btn btn-square">
+                    <button @click="searchAnime" class="btn btn-square" :aria-label="$t('search')" :name="$t('search')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

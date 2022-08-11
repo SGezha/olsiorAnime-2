@@ -1,3 +1,4 @@
+
 <template>
   <div class="bg-base-200 main-bg">
     <MyNavbar />

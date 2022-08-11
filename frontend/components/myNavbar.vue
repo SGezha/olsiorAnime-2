@@ -13,7 +13,7 @@ const logout = () => {
         <div class="navbar max-w-[1350px] mx-auto">
             <div class="navbar-start">
                 <a class="btn btn-ghost normal-case text-xl flex gap-[10px] items-center" href="/">
-                    <img src="/minloading.webp" class="rounded-full overflow-hidden w-[36px]" alt="">
+                    <img src="/minloading.webp" class="rounded-full overflow-hidden" width="36" height="36" alt="logo">
                     <div class="mb-[3px] text-sm md:text-lg">
                         {{ $t('title') }}
                     </div>
@@ -40,7 +40,7 @@ const logout = () => {
                 </a>
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle">
-                        <img v-if="twName" class="w-[36px] h-[36px] bg-neutral rounded-full p-[3px]" :src="twImg" alt="">
+                        <img v-if="twName" class="w-[36px] h-[36px] bg-neutral rounded-full p-[3px]" :src="twImg" alt="profileAvatar">
                         <svg v-else width="36" height="36" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
                             class="iconify iconify--carbon" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
