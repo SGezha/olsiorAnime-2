@@ -20,6 +20,8 @@ const { idle, lastActive } = useIdle(20 * 60)
 const chat = useState(() => [])
 const chatShow = useState(() => true)
 const chatSize = useState(() => 30)
+const heroku = useState(() => false)
+const timeMarkLoaded = useState(() => false)
 const { isSupported, orientation, angle, lockOrientation, unlockOrientation } = useScreenOrientation()
 const { playing, buffered, currentTime, duration, tracks, waiting, selectedTrack, volume, muted, isPictureInPicture, supportsPictureInPicture, togglePictureInPicture, enableTrack, disableTrack, } = controls
 
@@ -46,25 +48,35 @@ onMounted(() => {
 const { isFullscreen, enter, exit, toggle } = useFullscreen(player)
 const changeEpisode = (id, autoplay) => {
     current.value = id
+    const hls = new Hls()
+    hls.stopLoad()
+    timeMarkLoaded.value = false
     if (props.anime != null) {
-        if (Hls.isSupported()) {
-            hls.loadSource(props.anime.attributes.episodes[current.value].hls)
-            hls.attachMedia(document.querySelector('video'))
-            if(autoplay) document.querySelector('video').play()
-            if (props.anime.attributes.episodes[current.value].chat) {
-                getChat()
-            } else {
-                chatShow.value = false
-            }
+        if(heroku.value) {
+            video.value.src = props.anime.attributes.episodes[current.value].heroku
         } else {
-            video.value.src = props.anime.attributes.episodes[current.value].hls
+            if (Hls.isSupported()) {
+                hls.loadSource(props.anime.attributes.episodes[current.value].hls)
+                hls.attachMedia(document.querySelector('video'))
+            } else {
+                video.value.src = props.anime.attributes.episodes[current.value].hls
+            }
+        }
+        if(autoplay) {
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+              document.querySelector('video').play()
+            })
+        }
+        if (props.anime.attributes.episodes[current.value].chat) {
+            getChat()
+        } else {
+            chatShow.value = false
         }
     }
 }
 
 const endBuffer = computed(() => buffered.value.length > 0 ? buffered.value[buffered.value.length - 1][1] : 0)
 const formatDuration = (seconds) => new Date(1000 * seconds).toISOString().slice(12, 19)
-
 
 const nowChat = useState(() => [])
 watch(currentTime, (val) => {
@@ -139,17 +151,36 @@ const getRandomColor = () => {
     return color;
 }
 
+const timeMarkPosition = () => {
+    let timeMarks = document.querySelectorAll('.timeMark')
+    timeMarks.forEach(m => {
+        let left = calcMarkLeft(m.dataset.duration, m.dataset.time)
+        m.style.left = `calc(${left}% - ${m.offsetWidth}px)`
+    })
+    timeMarkLoaded.value = true
+}
+
+const calcMarkLeft = (videoDuration, markTime) => {
+    let markSec = markTime.split(':').reverse().reduce((prev, curr, i) => prev + curr*Math.pow(60, i), 0)
+    let leftMark = percentage(markSec, videoDuration)
+    return leftMark.toFixed(0)
+}
+
+const percentage = (partialValue, totalValue) => {
+   return (100 * partialValue) / totalValue;
+} 
+
 const formatTime = (duration) => {
-    let hrs = ~~(duration / 3600);
-    let mins = ~~((duration % 3600) / 60);
-    let secs = ~~duration % 60;
-    let ret = "";
+    let hrs = ~~(duration / 3600)
+    let mins = ~~((duration % 3600) / 60)
+    let secs = ~~duration % 60
+    let ret = ""
     if (hrs > 0) {
-        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "")
     }
-    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-    ret += "" + secs;
-    return ret;
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "")
+    ret += "" + secs
+    return ret
 }
 </script>
 
@@ -163,7 +194,7 @@ const formatTime = (duration) => {
 
                 <div class="w-full flex h-full relative">
                     <video ref="video" crossorigin="anonymous" class="block h-100 transition-all w-[100%]"
-                        :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }" :loop="loop"
+                        :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }" @loadeddata="timeMarkPosition" :loop="loop"
                         :style="{ width: `${chatShow ? 100 - chatSize : 100 }%` }"
                         @click="playing = !playing" />
                     <div v-if="anime.attributes.episodes[current].chat != undefined"
@@ -182,13 +213,16 @@ const formatTime = (duration) => {
                 </div>
                 
                 <client-only>
-                    <div class="absolute bottom-0 bg-base-200 bg-opacity-50 video-menu w-[100%] p-[20px] min-w-100 h-[106px] transition-transform"
-                        :class="{ 'translate-y-[106px]': isOutside || idle }">
+                    <div class="absolute bottom-0 bg-neutral bg-opacity-70 video-menu w-[100%] p-[20px] min-w-100 h-[100px] transition-transform"
+                        :class="{ 'translate-y-[110px]': isOutside || idle, 'pt-[30px] h-[110px]': anime.attributes.episodes[current].timeMark }">
+
+                        <div v-if="anime.attributes.episodes[current].timeMark" class="absolute top-[5px] flex w-full text-sm text-neutral-content">
+                            <div v-for="(mark, ind) in anime.attributes.episodes[current].timeMark" :class="{ 'tooltip-open': timeMarkLoaded}" class="timeMark tooltip tooltip-primary top-[24px] px-[5px] text-sm text-[rgba(0,0,0,0)] select-none" :data-tip="mark.title" :data-duration="duration" :data-time="mark.time">{{ mark.title }}</div>
+                        </div>
+
                         <VideoScrubber v-model="currentTime" :max="duration" :secondary="endBuffer">
                             <template #default="{ position, pendingValue }">
-                                <div class="absolute transform -translate-x-1/2 bg-black rounded px-2 bottom-0 mb-4 py-1 text-xs text-white"
-                                    :style="{ left: position }">
-                                    {{ formatDuration(pendingValue) }}
+                                <div class="absolute transform tooltip tooltip-open -translate-x-1/2 tooltip-primary rounded bottom-[9px] px-[5px] text-sm text-white" :style="{ left: position }" :data-tip="formatDuration(pendingValue)">
                                 </div>
                             </template>
                         </VideoScrubber>
@@ -273,6 +307,11 @@ const formatTime = (duration) => {
                                                 </path>
                                             </svg>
                                             <span>{{ $t('pip') }}</span>
+                                        </VideoMenuItem>
+                                        <VideoMenuItem v-if="anime.attributes.episodes[current].heroku != undefined">
+                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--bx" width="32" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM4 9V5h16v4zm16 4H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2zM4 19v-4h16v4z"></path><path fill="currentColor" d="M17 6h2v2h-2zm-3 0h2v2h-2zm3 10h2v2h-2zm-3 0h2v2h-2z"></path></svg>
+                                            <span>Heroku</span>
+                                            <input class="toggle" type="checkbox" @change="changeEpisode(current, true)" v-model="heroku">
                                         </VideoMenuItem>
                                         <VideoMenuItem v-if="anime.attributes.episodes[current].chat != undefined">
                                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -456,3 +495,11 @@ const formatTime = (duration) => {
         </div>
     </div>
 </template>
+
+<style>
+.tooltip::before {
+    font-size: inherit;
+    padding: inherit;
+}
+
+</style>

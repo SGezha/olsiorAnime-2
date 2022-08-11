@@ -27,8 +27,10 @@ const load = useState(() => false)
                     <div class="block mb-[20px] md:hidden">
                         <WatchTitle :anime="anime.data[0]" />
                     </div>
-                    <img class="object-cover rounded-md w-full showAnimation"
+                    <img class="object-cover rounded-md w-full showAnimation shadow-lg"
                         :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`" alt="">
+                    
+                    <WatchAnimeInfo :anime="anime.data[0]" />
                 </div>
 
                 <div class="relative w-full showAnimation">
@@ -71,7 +73,7 @@ const load = useState(() => false)
 }
 
 .video-menu {
-    backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); */
 }
 
 @media(max-width: 600px) {

@@ -21,5 +21,10 @@
     "comtext": "Post a comment",
     "comsend": "Send",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "watched": "Viewed",
+    "status": "Viewing status",
+    "epwached": "Viewed Episodes",
+    "watcheddate": "Viewing date",
+    "genres": "Genres"
 }
