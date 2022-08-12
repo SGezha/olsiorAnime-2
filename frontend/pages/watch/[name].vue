@@ -2,7 +2,7 @@
 const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
-const { pending, data: anime } = useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, pop }))
+const { pending, data: anime } = useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' }))
 const loadAnime = useState(() => false)
 onMounted(() => {
     loadAnime.value = true
@@ -13,7 +13,6 @@ const WatchAnimeInfo = defineAsyncComponent(() => import('~/components/watch/Ani
 const WatchPlayer = defineAsyncComponent(() => import('~/components/watch/Player'))
 const WatchDesc = defineAsyncComponent(() => import('~/components/watch/Desc'))
 const WatchInfo = defineAsyncComponent(() => import('~/components/watch/Info'))
-const WatchComents = defineAsyncComponent(() => import('~/components/watch/Coments'))
 </script>
 
 <template>

@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@callowcreation/basic-twitch-oauth": "^1.0.12",
-    "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/tailwindcss": "^5.3.1",
     "@pinia/nuxt": "^0.3.1",
     "crypto": "^1.0.1",
