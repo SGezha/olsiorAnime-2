@@ -5,9 +5,10 @@ const load = useState(() => false)
 const animeSort = useState(() => 'date')
 const searchQuery = useState(() => '')
 const { find } = useStrapi4()
-const { pending, data: animes } = useAsyncData('animes', () => find('animes', { pagination: { pageSize: 50 }, populate: '*' }))
+const animes = useState(() => [])
 
-onMounted(() => {
+onMounted(async () => {
+    animes.value = await find('animes', { pagination: { pageSize: 50 }, populate: '*' })
     sortAnime(animeSort.value)
     load.value = true
 })

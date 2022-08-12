@@ -32,5 +32,12 @@
     "sortstars": "Оцінка",
     "sortep": "Серія",
     "donate": "Топ донатеров",
-    "downloadVideo": "Завантажити"
+    "downloadVideo": "Завантажити",
+    "speed": "Швидкість",
+    "createmarkbtn": "Створити мітку",
+    "marktitle": "Створення мітки",
+    "markname": "Назва мітки",
+    "marktime": "Час мітки",
+    "markbtn": "Додати мітку",
+    "mark": "Мітки"
 }

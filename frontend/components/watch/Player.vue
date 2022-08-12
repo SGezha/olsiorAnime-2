@@ -1,5 +1,7 @@
 <script setup>
 import Hls from 'hls.js'
+import { useStorage } from '@vueuse/core'
+const { update } = useStrapi4()
 const router = useRouter()
 const config = useRuntimeConfig()
 const props = defineProps({
@@ -20,9 +22,12 @@ const chat = useState(() => [])
 const chatShow = useState(() => true)
 const chatSize = useState(() => 30)
 const heroku = useState(() => false)
+const markCreateModal = useState(() => false)
 const timeMarkLoaded = useState(() => false)
 const { isFullscreen, enter, exit, toggle } = useFullscreen(player)
 const { isSupported, orientation, angle, lockOrientation, unlockOrientation } = useScreenOrientation()
+const markTitle = useState(() => '')
+const twName = useCookie('tw_login')
 const { playing, buffered, currentTime, duration, tracks, waiting, selectedTrack, volume, muted, isPictureInPicture, supportsPictureInPicture, togglePictureInPicture, enableTrack, disableTrack, } = controls
 
 onMounted(() => {
@@ -173,6 +178,22 @@ const timeMarkPosition = () => {
     }, 100)
 }
 
+const createMark = () => {
+    const needEp = props.anime.attributes.episodes[current.value]
+    if (!needEp['timeMark']) {
+        needEp['timeMark'] = []
+    }
+    needEp['timeMark'].push({
+        title: markTitle.value,
+        time: formatDuration(currentTime.value),
+        author: twName
+    })
+    update('animes', props.anime.id, { episodes: props.anime.attributes.episodes }).then(() => {
+        timeMarkPosition()
+        markCreateModal.value = false
+    })
+}
+
 const calcMarkLeft = (videoDuration, markTime) => {
     let markSec = markTime.split(':').reverse().reduce((prev, curr, i) => prev + curr * Math.pow(60, i), 0)
     let leftMark = percentage(markSec, videoDuration)
@@ -227,13 +248,14 @@ const toggleFullScreen = () => {
     <div v-if="anime.attributes">
         <div class="mt-[10px] transition" :class="{ 'fixed left-0 top-0 mt-0 z-99 transition-all': isFullscreen }">
             <div class="outline-none relative" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
-                @keydown.prevent.space="playing = !playing" @keydown.right="currentTime += 5"
-                @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen" @keydown.m="muted = !muted" ref="player">
+                @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen"
+                @keydown.m="muted = !muted" ref="player">
                 <div class="relative bg-black rounded-md shadow overflow-hidden  flex items-center"
                     :class="{ ' h-screen w-screen rounded-none': isFullscreen, 'h-[50vh] min-h-[50vh] w-100 max-h-[50vh]': !isFullscreen }">
 
                     <div class="w-full flex h-full relative">
-                        <video ref="video" class="block h-100 transition-all w-[100%]"
+                        <video @keydown.prevent.space="playing = !playing" ref="video"
+                            class="block h-100 transition-all w-[100%]"
                             :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }"
                             @loadeddata="timeMarkPosition" :loop="loop"
                             :style="{ width: `${chatShow ? 100 - chatSize : 100}%` }" @click="playing = !playing" />
@@ -245,6 +267,38 @@ const toggleFullScreen = () => {
                                 <span class="text-white" v-html="msg.text"></span>
                             </div>
                         </div>
+
+                        <div v-if="markCreateModal"
+                            class="w-[80%] z-50 absolute top-[50%] left-[50%] shadow-lg -translate-x-[50%] -translate-y-[50%] bg-neutral showModal rounded-md overflow-hidden md:w-[50%]">
+                            <div class="w-full h-full relative p-[20px] flex flex-col">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-lg font-bold text-neutral-content">{{ $t('marktitle') }}: </div>
+                                    <div class="btn btn-error min-h-0 h-auto btn-circle p-[3px]"
+                                        @click="markCreateModal = false">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+                                            class="iconify iconify--material-symbols" width="20" height="20"
+                                            preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6Z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="flex relative flex-col">
+                                    <label class="label">
+                                        <span class="label-text">{{ $t('markname') }}</span>
+                                    </label>
+                                    <input type="text" v-model="markTitle" class="input input-bordered w-full" />
+                                    <label class="label">
+                                        <span class="label-text">{{ $t('marktime') }}</span>
+                                    </label>
+                                    <input class="input w-full" type="text" disabled
+                                        :value="formatDuration(currentTime)">
+                                    <button @click="createMark" class="btn w-full mt-[10px] btn-primary">{{ $t('markbtn') }}</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div v-if="waiting"
@@ -253,8 +307,8 @@ const toggleFullScreen = () => {
                     </div>
 
                     <client-only>
-                        <div class="absolute video-menu bottom-0 bg-neutral bg-opacity-70 video-menu w-[100%] p-[20px] h-[100px] transition-transform"
-                            :class="{ 'translate-y-[110px]': isOutside || idle, 'pt-[30px] h-[110px]': anime.attributes.episodes[current].timeMark }">
+                        <div class="absolute video-menu bottom-0 bg-neutral bg-opacity-70 video-menu w-[100%] p-[20px] h-[100px] transition-all"
+                            :class="{ 'translate-y-[110px] opacity-0': isOutside || idle, 'pt-[30px] h-[110px]': anime.attributes.episodes[current].timeMark }">
 
                             <div v-if="anime.attributes.episodes[current].timeMark"
                                 class="absolute top-[5px] flex w-full text-sm text-neutral-content"
@@ -336,7 +390,7 @@ const toggleFullScreen = () => {
                                             <VideoMenuItem @click="openLink(anime.attributes.episodes[current].tgLink)">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--ic" width="32" height="32"
+                                                    role="img" class="iconify iconify--ic" width="24" height="24"
                                                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                                     <path fill="currentColor"
                                                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19c-.14.75-.42 1-.68 1.03c-.58.05-1.02-.38-1.58-.75c-.88-.58-1.38-.94-2.23-1.5c-.99-.65-.35-1.01.22-1.59c.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02c-.09.02-1.49.95-4.22 2.79c-.4.27-.76.41-1.08.4c-.36-.01-1.04-.2-1.55-.37c-.63-.2-1.12-.31-1.08-.66c.02-.18.27-.36.74-.55c2.92-1.27 4.86-2.11 5.83-2.51c2.78-1.16 3.35-1.36 3.73-1.36c.08 0 .27.02.39.12c.1.08.13.19.14.27c-.01.06.01.24 0 .38z">
@@ -348,7 +402,7 @@ const toggleFullScreen = () => {
                                                 @click="() => { togglePictureInPicture(); close(); }">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
+                                                    role="img" class="iconify iconify--carbon" width="24" height="24"
                                                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
                                                     <path fill="currentColor"
                                                         d="M28 4H10a2.006 2.006 0 0 0-2 2v14a2.006 2.006 0 0 0 2 2h18a2.006 2.006 0 0 0 2-2V6a2.006 2.006 0 0 0-2-2Zm0 16H10V6h18Z">
@@ -359,10 +413,21 @@ const toggleFullScreen = () => {
                                                 </svg>
                                                 <span>{{ $t('pip') }}</span>
                                             </VideoMenuItem>
+                                            <VideoMenuItem v-if="twName" @click="markCreateModal = true; close()">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                                                    role="img" class="iconify iconify--uil" width="24" height="24"
+                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                                    <path fill="currentColor"
+                                                        d="M14 9.45h-1v-1a1 1 0 0 0-2 0v1h-1a1 1 0 0 0 0 2h1v1a1 1 0 0 0 2 0v-1h1a1 1 0 0 0 0-2Zm6.46.18A8.5 8.5 0 1 0 6 16.46l5.3 5.31a1 1 0 0 0 1.42 0L18 16.46a8.46 8.46 0 0 0 2.46-6.83Zm-3.86 5.42l-4.6 4.6l-4.6-4.6a6.49 6.49 0 0 1-1.87-5.22A6.57 6.57 0 0 1 8.42 5a6.47 6.47 0 0 1 7.16 0a6.57 6.57 0 0 1 2.89 4.81a6.49 6.49 0 0 1-1.87 5.24Z">
+                                                    </path>
+                                                </svg>
+                                                <span>{{ $t('createmarkbtn') }}</span>
+                                            </VideoMenuItem>
                                             <VideoMenuItem @click="openLink(anime.attributes.episodes[current].heroku)">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--ph" width="32" height="32"
+                                                    role="img" class="iconify iconify--ph" width="24" height="24"
                                                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256">
                                                     <path fill="currentColor"
                                                         d="M71.5 88.5a12 12 0 0 1 17-17L116 99V24a12 12 0 0 1 24 0v75l27.5-27.5a12 12 0 0 1 17 17l-48 48a12.1 12.1 0 0 1-17 0ZM224 116h-39.4a12 12 0 0 0 0 24H220v56H36v-56h35.4a12 12 0 0 0 0-24H32a20.1 20.1 0 0 0-20 20v64a20.1 20.1 0 0 0 20 20h192a20.1 20.1 0 0 0 20-20v-64a20.1 20.1 0 0 0-20-20Zm-20 52a16 16 0 1 0-16 16a16 16 0 0 0 16-16Z">
@@ -374,7 +439,7 @@ const toggleFullScreen = () => {
                                                 v-if="anime.attributes.episodes[current].heroku != undefined">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--bx" width="32" height="32"
+                                                    role="img" class="iconify iconify--bx" width="24" height="24"
                                                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                                     <path fill="currentColor"
                                                         d="M20 3H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM4 9V5h16v4zm16 4H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2zM4 19v-4h16v4z">
@@ -390,7 +455,31 @@ const toggleFullScreen = () => {
                                             <VideoMenuItem v-if="anime.attributes.episodes[current].chat != undefined">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
+                                                    role="img" class="iconify iconify--carbon" width="24" height="24"
+                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+                                                    <path fill="currentColor"
+                                                        d="M26 16a9.928 9.928 0 0 0-1.14-4.618l-1.495 1.496A7.948 7.948 0 0 1 24 16zm-2.586-6L22 8.586L17.285 13.3A2.966 2.966 0 0 0 16 13a3 3 0 1 0 3 3a2.966 2.966 0 0 0-.3-1.285zM16 17a1 1 0 1 1 1-1a1.001 1.001 0 0 1-1 1zm0-9a7.952 7.952 0 0 1 3.122.635l1.496-1.496A9.986 9.986 0 0 0 6 16h2a8.01 8.01 0 0 1 8-8z">
+                                                    </path>
+                                                    <path fill="currentColor"
+                                                        d="M16 30a14 14 0 1 1 14-14a14.016 14.016 0 0 1-14 14Zm0-26a12 12 0 1 0 12 12A12.014 12.014 0 0 0 16 4Z">
+                                                    </path>
+                                                </svg>
+                                                <span>{{ $t('speed') }}</span>
+                                                <select class="select select-sm" v-model="controls.rate.value">
+                                                    <option value="3">3x</option>
+                                                    <option value="2">2x</option>
+                                                    <option value="1.75">1.75x</option>
+                                                    <option value="1.5">1.5x</option>
+                                                    <option value="1.25">1.25x</option>
+                                                    <option value="1">1x</option>
+                                                    <option value="0.75">0.75x</option>
+                                                    <option value="0.5">0.5x</option>
+                                                </select>
+                                            </VideoMenuItem>
+                                            <VideoMenuItem v-if="anime.attributes.episodes[current].chat != undefined">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                                                    role="img" class="iconify iconify--carbon" width="24" height="24"
                                                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
                                                     <path fill="currentColor"
                                                         d="M17.74 30L16 29l4-7h6a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9v2H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4h-4.84Z">
@@ -411,124 +500,6 @@ const toggleFullScreen = () => {
                                                     <option value="80">80%</option>
                                                     <option value="90">90%</option>
                                                 </select>
-                                            </VideoMenuItem>
-                                        </div>
-                                    </template>
-                                </VideoMenu>
-                                <VideoMenu>
-                                    <template #default="{ open }">
-                                        <button class="btn videoBtn" @click="open()">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
-                                                class="iconify iconify--carbon" width="32" height="32"
-                                                preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                <path fill="currentColor"
-                                                    d="M26 16a9.928 9.928 0 0 0-1.14-4.618l-1.495 1.496A7.948 7.948 0 0 1 24 16zm-2.586-6L22 8.586L17.285 13.3A2.966 2.966 0 0 0 16 13a3 3 0 1 0 3 3a2.966 2.966 0 0 0-.3-1.285zM16 17a1 1 0 1 1 1-1a1.001 1.001 0 0 1-1 1zm0-9a7.952 7.952 0 0 1 3.122.635l1.496-1.496A9.986 9.986 0 0 0 6 16h2a8.01 8.01 0 0 1 8-8z">
-                                                </path>
-                                                <path fill="currentColor"
-                                                    d="M16 30a14 14 0 1 1 14-14a14.016 14.016 0 0 1-14 14Zm0-26a12 12 0 1 0 12 12A12.014 12.014 0 0 0 16 4Z">
-                                                </path>
-                                            </svg>
-                                        </button>
-                                    </template>
-                                    <template #menu="{ close }">
-                                        <div
-                                            class="absolute bottom-[60px] right-0 shadow-xl p-3 bg-neutral w-[200px] grid grid-cols-2 gap-[10px] rounded">
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 3 }"
-                                                @click="() => { controls.rate.value = 3; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                3x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 2 }"
-                                                @click="() => { controls.rate.value = 2; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                2x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 1.75 }"
-                                                @click="() => { controls.rate.value = 1.75; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                1.75x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 1.5 }"
-                                                @click="() => { controls.rate.value = 1.5; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                1.5x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 1.25 }"
-                                                @click="() => { controls.rate.value = 1.25; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                1.25x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 1 }"
-                                                @click="() => { controls.rate.value = 1; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                1x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 0.75 }"
-                                                @click="() => { controls.rate.value = 0.75; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                0.75x
-                                            </VideoMenuItem>
-                                            <VideoMenuItem :class="{ 'bg-primary': controls.rate.value == 0.5 }"
-                                                @click="() => { controls.rate.value = 0.5; close(); }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M30 20a13.854 13.854 0 0 0-2.23-7.529l-1.444 1.445A11.892 11.892 0 0 1 28 20zM28 9.414L26.586 8l-8.567 8.567A3.952 3.952 0 0 0 16 16a4 4 0 1 0 4 4a3.953 3.953 0 0 0-.567-2.02zM16 22a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm0-14a11.909 11.909 0 0 1 6.083 1.674l1.454-1.453A13.977 13.977 0 0 0 2 20h2A12.014 12.014 0 0 1 16 8z">
-                                                    </path>
-                                                </svg>
-                                                0.5x
                                             </VideoMenuItem>
                                         </div>
                                     </template>
@@ -571,10 +542,25 @@ const toggleFullScreen = () => {
             </div>
         </div>
     </div>
-
 </template>
 
 <style>
+.showModal {
+    animation: showModal 0.25s ease;
+}
+
+@keyframes showModal {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-50%) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-50%) scale(1);
+    }
+}
+
 .tooltip::before {
     font-size: inherit;
     padding: inherit;

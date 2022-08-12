@@ -1,16 +1,23 @@
-import indexVue from '~~/pages/index.vue';
 <script setup>
+const { update } = useStrapi4()
 const tab = useState(() => 'season')
+const twName = useCookie('tw_login')
 
 const props = defineProps({
     anime: {
         type: Object,
-        default: () => {}
+        default: () => { }
     }
 })
 
-if(props.anime.attributes.seasons == null) tab.value = 'arches'
-if(props.anime.attributes.arches == null && props.anime.attributes.seasons == null) tab.value = 'ep'
+if (props.anime.attributes.seasons == null) tab.value = 'arches'
+if (props.anime.attributes.arches == null && props.anime.attributes.seasons == null) tab.value = 'ep'
+
+const deleteMark = (ep, mark) => {
+    let needEp = props.anime.attributes.episodes.find(a => a.title == ep.title)
+    needEp.timeMark = needEp.timeMark.filter(a => a.title != mark.title && a.author != mark.author)
+    update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
+}
 </script>
 
 <template>
@@ -18,15 +25,23 @@ if(props.anime.attributes.arches == null && props.anime.attributes.seasons == nu
         <div class="font-bold text-2xl">{{ $t('info') }}</div>
     </div>
     <div class="tabs mt-[15px] flex w-[100%] ">
-        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.seasons != null" @click="tab = 'season'" :class="{'tab-active': tab == 'season'}">{{ $t('seasons') }}</a> 
-        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.arches != null" @click="tab = 'arches'" :class="{'tab-active': tab == 'arches'}">{{ $t('arches') }}</a> 
-        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.op != null" @click="tab = 'op'" :class="{'tab-active': tab == 'op'}">{{ $t('op') }}</a>
-        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.ed != null" @click="tab = 'ed'" :class="{'tab-active': tab == 'ed'}">{{ $t('ed') }}</a>
+        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.seasons != null"
+            @click="tab = 'season'" :class="{ 'tab-active': tab == 'season' }">{{ $t('seasons') }}</a>
+        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.arches != null"
+            @click="tab = 'arches'" :class="{ 'tab-active': tab == 'arches' }">{{ $t('arches') }}</a>
+        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.op != null" @click="tab = 'op'"
+            :class="{ 'tab-active': tab == 'op' }">{{ $t('op') }}</a>
+        <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.ed != null" @click="tab = 'ed'"
+            :class="{ 'tab-active': tab == 'ed' }">{{ $t('ed') }}</a>
+        <a class="tab text-xl tab-bordered transition-colors" @click="tab = 'mark'"
+            :class="{ 'tab-active': tab == 'mark' }">{{ $t('mark') }}</a>
     </div>
 
     <div class="mt-[15px] flex w-[100%] flex-col showTab" v-if="tab == 'season'">
         <span v-for="(season, ind) in anime.attributes.seasons">
-            {{ ind + 1}}. <a class="link shadow-md" :href="season.url">{{ season.title }}</a> {{ season.text ? ' - ' + season.text : '' }}
+            {{ ind + 1 }}. <a class="link shadow-md" :href="season.url">{{ season.title }}</a> {{ season.text ? ' - ' +
+                    season.text : ''
+            }}
         </span>
     </div>
 
@@ -38,30 +53,59 @@ if(props.anime.attributes.arches == null && props.anime.attributes.seasons == nu
         <div v-for="(video, ind) in anime.attributes.op">
             <label :for="`modal-op-${ind}`" class="btn modal-button">{{ video.title }} ({{ video.episodes }})</label>
         </div>
-        <div class=""></div>
     </div>
 
     <div class="mt-[15px] w-[100%] flex flex-wrap gap-[5px] showTab" v-if="tab == 'ed'">
         <div v-for="(video, ind) in anime.attributes.ed">
             <label :for="`modal-ep-${ind}`" class="btn modal-button">{{ video.title }} ({{ video.episodes }})</label>
         </div>
-        <div class=""></div>
     </div>
 
-    <div v-if="tab == 'op'" v-for="(video, ind) in anime.attributes.op" class="w-full bg-black rounded-md overflow-hidden">
+    <div class="mt-[15px] w-[100%] flex flex-wrap gap-[5px] showTab" v-if="tab == 'mark'">
+        <div v-for="(ep, ind) in anime.attributes.episodes.filter(a => a.timeMark && a.timeMark.length > 0)" class="bg-neutral p-[10px] rounded-md">
+            <div class="text-lg font-bold">
+                {{ ep.title }}
+            </div>
+            <div v-for="mark in ep.timeMark" class="flex items-center">
+                <div class="">{{ mark.title }} - {{ mark.time }} {{ mark.author ? `(${mark.author})` : '' }}</div>
+                <button @click="deleteMark(ep, mark)" v-if="mark.author == twName && twName != undefined" class="text-error">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22"
+                        height="22" aria-hidden="true" role="img" class="iconify iconify--mdi"
+                        preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="tab == 'op'" v-for="(video, ind) in anime.attributes.op"
+        class="w-full bg-black rounded-md overflow-hidden">
         <input type="checkbox" :id="`modal-op-${ind}`" class="modal-toggle" />
         <label :for="`modal-op-${ind}`" class="modal cursor-pointer">
-            <label class="modal-box relative min-h-[60vh] min-w-[60vw] p-0 flex items-center justify-center aspect-video" for="">
-                <iframe width="100%" height="auto" style="aspect-ratio: 16 / 9;" :src="`https://www.youtube.com/embed/${video.url.split('?v=')[1]}`" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <label
+                class="modal-box relative min-h-[60vh] min-w-[60vw] p-0 flex items-center justify-center aspect-video"
+                for="">
+                <iframe width="100%" height="auto" style="aspect-ratio: 16 / 9;"
+                    :src="`https://www.youtube.com/embed/${video.url.split('?v=')[1]}`" title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
             </label>
         </label>
     </div>
 
-    <div v-if="tab == 'ed'" v-for="(video, ind) in anime.attributes.ed" class="w-full bg-black rounded-md overflow-hidden">
+    <div v-if="tab == 'ed'" v-for="(video, ind) in anime.attributes.ed"
+        class="w-full bg-black rounded-md overflow-hidden">
         <input type="checkbox" :id="`modal-ep-${ind}`" class="modal-toggle" />
         <label :for="`modal-ep-${ind}`" class="modal cursor-pointer">
             <label class="modal-box relative min-h-[60vh] min-w-[60vw] p-0 flex items-center justify-center" for="">
-                <iframe width="100%" height="auto" style="aspect-ratio: 16 / 9;" :src="`https://www.youtube.com/embed/${video.url.split('?v=')[1]}`" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe width="100%" height="auto" style="aspect-ratio: 16 / 9;"
+                    :src="`https://www.youtube.com/embed/${video.url.split('?v=')[1]}`" title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
             </label>
         </label>
     </div>
@@ -93,6 +137,7 @@ if(props.anime.attributes.arches == null && props.anime.attributes.seasons == nu
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }

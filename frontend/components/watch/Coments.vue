@@ -9,18 +9,22 @@ const props = defineProps({
     }
 })
 const { findOne, find, create, delete: _delete } = useStrapi4()
-const { pending, data: comments } = useAsyncData('comments', () => find('comments', { populate: '*', sort: 'createdAt:desc', filters: { url: props.url } }))
+const { pending, data: comments } = useAsyncData('comments', () => find('comments', { populate: '*', pagination: { pageSize: 100 }, sort: 'createdAt:desc', filters: { url: props.url } }))
+const disableCom = useState(() => false)
 const msg = useState(() => '')
 const sendCom = async () => {
-    if(msg.value == '') return
-    await create('comments', { url: props.url, msg: msg.value, author: twName.value, img: twImg.value })
-    msg.value = ''
-    const newComments = await find('comments', { populate: '*', sort: 'createdAt:desc', filters: { url: props.url } })
-    comments.value = newComments
+    if(msg.value == '' || disableCom.value) return
+    disableCom.value = true
+    create('comments', { url: props.url, msg: msg.value, author: twName.value, img: twImg.value }).then(async () => {
+        msg.value = ''
+        const newComments = await find('comments', { populate: '*', pagination: { pageSize: 100 }, sort: 'createdAt:desc', filters: { url: props.url } })
+        comments.value = newComments
+        disableCom.value = false
+    })
 }
 const deleteCom = async (id) => {
     await _delete('comments', id)
-    const newComments = await find('comments', { populate: '*', sort: 'createdAt:desc', filters: { url: props.url } })
+    const newComments = await find('comments', { populate: '*', pagination: { pageSize: 100 }, sort: 'createdAt:desc', filters: { url: props.url } })
     comments.value = newComments
 }
 </script>
@@ -33,7 +37,7 @@ const deleteCom = async (id) => {
         <div class="" v-if="twName">
             <div class="text-lg">{{ $t('comtext') }}</div>
             <div v-if="twName" class="flex gap-[10px]">
-                <input v-model="msg" @keydown.enter="sendCom" type="text" class="input input-primary input-bordered w-full" />
+                <input v-model="msg" :disabled="disableCom" @keydown.enter="sendCom" type="text" class="input input-primary input-bordered w-full" />
                 <button @click="sendCom" class="btn btn-primary">{{ $t('comsend') }}</button>
             </div>
         </div>

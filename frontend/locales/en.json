@@ -32,5 +32,12 @@
     "sortstars": "Stars",
     "sortep": "Series",
     "donate": "Top donate",
-    "downloadVideo": "Download"
+    "downloadVideo": "Download",
+    "speed": "Speed",
+    "createmarkbtn": "Create a label",
+    "marktitle": "Creating a label",
+    "markname": "Label name",
+    "marktime": "Time label",
+    "markbtn": "Add a label",
+    "mark": "labels"
 }

@@ -32,5 +32,12 @@
     "sortstars": "Оценка",
     "sortep": "Серии",
     "donate": "Топ донатеров",
-    "downloadVideo": "Скачать"
+    "downloadVideo": "Скачать",
+    "speed": "Скорость",
+    "createmarkbtn": "Создать метку",
+    "marktitle": "Создание метки",
+    "markname": "Название метки",
+    "marktime": "Время метки",
+    "markbtn": "Добавить метку",
+    "mark": "Метки"
 }

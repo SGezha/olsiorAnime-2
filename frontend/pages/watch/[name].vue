@@ -2,9 +2,11 @@
 const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
-const { pending, data: anime } = useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' }))
+const { pending, data: seoAnime } = useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' }))
+const anime = useState(() => [])
 const loadAnime = useState(() => false)
-onMounted(() => {
+onMounted(async () => {
+    anime.value = await find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' })
     loadAnime.value = true
 })
 
@@ -17,14 +19,18 @@ onMounted(() => {
 
 <template>
     <div class="">
-         <Head>
-            <Title>{{ `${anime.data[0].attributes.title.split("/")[0]} - Олсиор смотрит аниме` }}</Title>
-            <Meta name="og-title" hid="og-title" property="og:title" :content="anime.data[0].attributes.title" />
-            <Meta name="description" hid="description" :content="anime.data[0].attributes.description" />
-            <Meta name="og:description" hid="og:description" property="og:description" :content="anime.data[0].attributes.description" />
-            <Meta v-if="anime.data[0].attributes.background.data != null" name="og:image" hid="og:image" property="og:image" :content="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" />
+        <Head>
+            <Title>{{ `${seoAnime.data[0].attributes.title.split("/")[0]} - Олсиор смотрит аниме` }}</Title>
+            <Meta name="og-title" hid="og-title" property="og:title" :content="seoAnime.data[0].attributes.title" />
+            <Meta name="description" hid="description" :content="seoAnime.data[0].attributes.description" />
+            <Meta name="og:description" hid="og:description" property="og:description"
+                :content="seoAnime.data[0].attributes.description" />
+            <Meta v-if="seoAnime.data[0].attributes.background.data != null" name="og:image" hid="og:image"
+                property="og:image"
+                :content="`${config.public.apiBase}${seoAnime.data[0].attributes.background.data.attributes.url}`" />
         </Head>
-        <div v-if="!loadAnime" style="height: calc(100vh - calc(100vh - 100%))" class="absolute top-0 left-0 w-screen bg-neutral z-50 flex justify-center items-center">
+        <div v-if="!loadAnime" style="height: calc(100vh - calc(100vh - 100%))"
+            class="absolute top-0 left-0 w-screen bg-neutral z-50 flex justify-center items-center">
             <img src="/loading.gif" class="rounded-full w-[100px]" alt="">
         </div>
         <div v-if="!pending && loadAnime" class="">
@@ -40,8 +46,9 @@ onMounted(() => {
                             <WatchTitle :anime="anime.data[0]" />
                         </div>
                         <img class="object-cover rounded-md w-full showAnimation shadow-lg"
-                            :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`" alt="">
-                        
+                            :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`"
+                            alt="">
+
                         <WatchAnimeInfo :anime="anime.data[0]" />
                     </div>
 
