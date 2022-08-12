@@ -1,9 +1,9 @@
 <template>
-    <footer class="footer items-center p-[10px] py-[40px] mx-auto max-w-[1350px]">
-        <div class="items-center grid-flow-col">
+    <footer class="footer flex justify-between items-center p-[10px] py-[40px] mx-auto max-w-[1350px]">
+        <div class="">
             <p>Made by <a href="https://sgezha.github.io/#/" target="_blank" class="link">SGezha</a> with ❤️</p>
         </div>
-        <div class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+        <div class="">
             <a href="https://t.me/animekogda" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"

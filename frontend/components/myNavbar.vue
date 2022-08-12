@@ -2,6 +2,9 @@
 const twName = useCookie('tw_login')
 const twImg = useCookie('tw_img')
 
+const navbar = ref()
+const { isFullscreen, enter, exit, toggle } = useFullscreen(navbar)
+
 const logout = () => {
     document.cookie.split(";").forEach(function (c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); })
     window.location = '/'
@@ -9,8 +12,8 @@ const logout = () => {
 </script>
 
 <template>
-    <div class="bg-base-300 bg-opacity-50 z-10 relative">
-        <div class="navbar max-w-[1350px] mx-auto">
+    <div v-if="!isFullscreen" class="bg-base-300 bg-opacity-50 z-10 relative">
+        <div ref="navbar" class="navbar max-w-[1350px] mx-auto">
             <div class="navbar-start">
                 <a class="btn btn-ghost normal-case text-xl flex gap-[10px] items-center" href="/">
                     <img src="/minloading.webp" class="rounded-full overflow-hidden" width="36" height="36" alt="logo">
