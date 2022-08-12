@@ -367,7 +367,7 @@ const toggleFullScreen = () => {
                                     </svg>
                                 </button>
                                 <VideoScrubber v-model="volume" :max="1" class="w-32 ml-2 hidden md:flex" />
-                                <div class="flex-col flex-1 text-sm ml-2 hidden md:flex">
+                                <div class="flex-col flex-1 text-sm ml-2 text-neutral-content hidden md:flex">
                                     {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
                                 </div>
 
@@ -448,7 +448,7 @@ const toggleFullScreen = () => {
                                                         d="M17 6h2v2h-2zm-3 0h2v2h-2zm3 10h2v2h-2zm-3 0h2v2h-2z"></path>
                                                 </svg>
                                                 <span>Heroku</span>
-                                                <input class="toggle" type="checkbox"
+                                                <input class="toggle toggle-primary" type="checkbox"
                                                     @change="changeEpisode(current, true, currentTime)"
                                                     v-model="heroku">
                                             </VideoMenuItem>
@@ -465,7 +465,7 @@ const toggleFullScreen = () => {
                                                     </path>
                                                 </svg>
                                                 <span>{{ $t('speed') }}</span>
-                                                <select class="select select-sm" v-model="controls.rate.value">
+                                                <select class="select select-sm bg-primary text-neutral-content" v-model="controls.rate.value">
                                                     <option value="3">3x</option>
                                                     <option value="2">2x</option>
                                                     <option value="1.75">1.75x</option>
@@ -488,8 +488,8 @@ const toggleFullScreen = () => {
                                                     </path>
                                                 </svg>
                                                 <span>{{ $t('chat') }}</span>
-                                                <input class="toggle" type="checkbox" v-model="chatShow">
-                                                <select class="select select-sm" v-model="chatSize">
+                                                <input class="toggle toggle-primary" type="checkbox" v-model="chatShow">
+                                                <select class="select select-sm bg-primary text-neutral-content" v-model="chatSize">
                                                     <option value="10">10%</option>
                                                     <option value="20">20%</option>
                                                     <option value="30">30%</option>

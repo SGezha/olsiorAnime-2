@@ -15,8 +15,13 @@ if (props.anime.attributes.arches == null && props.anime.attributes.seasons == n
 
 const deleteMark = (ep, mark) => {
     let needEp = props.anime.attributes.episodes.find(a => a.title == ep.title)
-    needEp.timeMark = needEp.timeMark.filter(a => a.title == mark.title && a.author == mark.author)
-    update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
+    let needMark = needEp.timeMark.findIndex(a => a.title == mark.title && a.author == twName.value && a.time == mark.time)
+    if (needMark > -1) { 
+        console.log(needMark)
+        needEp.timeMark.splice(needMark, 1)
+    }
+    console.log(needEp.timeMark)
+    // update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
 }
 </script>
 
@@ -61,7 +66,7 @@ const deleteMark = (ep, mark) => {
         </div>
     </div>
 
-    <div class="mt-[15px] w-[100%] flex flex-wrap gap-[5px] showTab" v-if="tab == 'mark'">
+    <div class="mt-[15px] w-[100%] flex flex-wrap gap-[5px] showTab text-neutral-content" v-if="tab == 'mark'">
         <div v-for="(ep, ind) in anime.attributes.episodes.filter(a => a.timeMark && a.timeMark.length > 0)" class="bg-neutral p-[10px] rounded-md">
             <div class="text-lg font-bold">
                 {{ ep.title }}
