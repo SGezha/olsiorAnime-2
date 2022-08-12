@@ -2,7 +2,7 @@
 const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
-const { pending, data: anime } = useAsyncData('anime', () => find('animes', { populate: '*', filters: { url: router.currentRoute._value.params.name } }))
+const { pending, data: anime } = useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, pop }))
 const loadAnime = useState(() => false)
 onMounted(() => {
     loadAnime.value = true

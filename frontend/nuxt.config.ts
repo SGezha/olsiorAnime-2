@@ -7,6 +7,7 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@nuxtjs/tailwindcss',
         '@nuxtjs/color-mode',
+        '@nuxtjs/proxy'
     ],
     strapi: {
         url: process.env.API,
@@ -14,6 +15,13 @@ export default defineNuxtConfig({
         version: 'v4',
         cookie: {},
         cookieName: 'strapi_jwt'
+    },
+    proxy: {
+        'https://olsioradmin.smotrel.net/api': {
+            target: 'http://localhost:1337',
+            changeOrigin: true,
+            pathRewrite: { '^https://olsioradmin.smotrel.net/api': '/' },
+        }
     },
     runtimeConfig: {
         public: {
