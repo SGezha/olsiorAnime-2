@@ -17,17 +17,17 @@ onMounted(() => {
 
 <template>
     <div class="">
-        <div v-if="!loadAnime" class="absolute top-0 left-0 w-screen h-screen bg-neutral z-50 flex justify-center items-center">
+         <Head>
+            <Title>{{ `${anime.data[0].attributes.title.split("/")[0]} - Олсиор смотрит аниме` }}</Title>
+            <Meta name="og-title" hid="og-title" property="og:title" :content="anime.data[0].attributes.title" />
+            <Meta name="description" hid="description" :content="anime.data[0].attributes.description" />
+            <Meta name="og:description" hid="og:description" property="og:description" :content="anime.data[0].attributes.description" />
+            <Meta v-if="anime.data[0].attributes.background.data != null" name="og:image" hid="og:image" property="og:image" :content="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" />
+        </Head>
+        <div v-if="!loadAnime" style="height: calc(100vh - calc(100vh - 100%))" class="absolute top-0 left-0 w-screen bg-neutral z-50 flex justify-center items-center">
             <img src="/loading.gif" class="rounded-full w-[100px]" alt="">
         </div>
         <div v-if="!pending && loadAnime" class="">
-            <Head>
-                <Title>{{ `${anime.data[0].attributes.title.split("/")[0]} - Олсиор смотрит аниме` }}</Title>
-                <Meta name="og-title" hid="og-title" property="og:title" :content="anime.data[0].attributes.title" />
-                <Meta name="description" hid="description" :content="anime.data[0].attributes.description" />
-                <Meta name="og:description" hid="og:description" property="og:description" :content="anime.data[0].attributes.description" />
-                <Meta v-if="anime.data[0].attributes.background.data != null" name="og:image" hid="og:image" property="og:image" :content="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" />
-            </Head>
             <div v-if="anime.data[0].attributes.background.data != null"
                 class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
                 <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]"

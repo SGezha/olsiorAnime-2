@@ -43,6 +43,15 @@ const searchAnime = () => {
 
 <template>
     <div class="min-h-screen">
+        <Head>
+            <Meta name="og:url" hid="og:url" property="og:url" :content="`https://smotrel.net`" />
+            <Meta name="og-title" hid="og-title" property="og:title" content="Олсиор смотрит аниме" />
+            <Meta name="description" hid="description"
+                content="Сайт с записями стримов просмотра аниме Olsior'а! С удобным интерфейсом и крутыми фишками. Сохранение прогресса просмотра, запись чата." />
+            <Meta name="og:description" hid="og:description" property="og:description"
+                content="Сайт с записями стримов просмотра аниме Olsior'а! С удобным интерфейсом и крутыми фишками. Сохранение прогресса просмотра, запись чата." />
+            <Meta name="og:image" hid="og:image" property="og:image" content="https://smotrel.net/site.jpg" />
+        </Head>
         <MyDonate />
 
         <div
@@ -73,7 +82,7 @@ const searchAnime = () => {
 
         <div v-if="!load"
             class="grid w-100 p-[10px] gap-[15px] md:gap-[30px] xl:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 mx-auto max-w-[1350px]">
-            <MyCardLoad v-for="anime in animes.data.slice(0, 10)" :key="anime.id" />
+            <MyCardLoad v-for="anime in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]" />
         </div>
         <div v-if="!pending && load && searchResult.length > 0"
             class="grid w-100 p-[10px] gap-[15px] md:gap-[30px] xl:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 mx-auto max-w-[1350px]">

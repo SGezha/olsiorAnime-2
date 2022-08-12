@@ -1,0 +1,20 @@
+{
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "Когда наруто?",
+    "short_name": "Когда наруто?",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000",
+    "description": "Приложение с записями стримов просмотра аниме Olsior'а! С удобным интерфейсом и крутыми фишками. Сохранение прогресса просмотра, запись чата, режим театра, мобильный интерфейс.",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "workboxPluginMode": "InjectManifest",
+    "workboxOptions": {
+      "swSrc": "/sw.js"
+    }
+}

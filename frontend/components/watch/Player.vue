@@ -53,14 +53,12 @@ const changeEpisode = (id, autoplay, videoTime) => {
     timeMarkLoaded.value = false
     if (props.anime != null) {
         if (heroku.value) {
-            console.log('')
             video.value.src = props.anime.attributes.episodes[current.value].heroku
             document.querySelector('video').onloadeddata = () => {
                 if (videoTime) document.querySelector('video').currentTime = videoTime
                 if (autoplay) document.querySelector('video').play()
             }
         } else {
-            console.log('tut')
             const hls = new Hls()
             if (Hls.isSupported()) {
                 hls.loadSource(props.anime.attributes.episodes[current.value].hls)
