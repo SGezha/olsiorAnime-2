@@ -17,7 +17,6 @@ const deleteMark = (ep, mark) => {
     let needEp = props.anime.attributes.episodes.find(a => a.title == ep.title)
     let needMark = needEp.timeMark.findIndex(a => a.title == mark.title && a.author == twName.value && a.time == mark.time)
     if (needMark > -1) { 
-        console.log(needMark)
         needEp.timeMark.splice(needMark, 1)
     }
     update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
