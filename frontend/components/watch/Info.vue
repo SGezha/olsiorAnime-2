@@ -24,7 +24,7 @@ const deleteMark = (ep, mark) => {
     <div class="mt-[30px]">
         <div class="font-bold text-2xl">{{ $t('info') }}</div>
     </div>
-    <div class="tabs mt-[15px] flex w-[100%] ">
+    <div class="tabs mt-[15px] flex w-[100%] relative">
         <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.seasons != null"
             @click="tab = 'season'" :class="{ 'tab-active': tab == 'season' }">{{ $t('seasons') }}</a>
         <a class="tab text-xl tab-bordered transition-colors" v-if="anime.attributes.arches != null"

@@ -85,11 +85,11 @@ const searchAnime = () => {
             class="grid w-100 p-[10px] gap-[15px] md:gap-[30px] xl:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 mx-auto max-w-[1350px]">
             <MyCardLoad v-for="anime in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]" />
         </div>
-        <div v-if="!pending && load && searchResult.length > 0"
+        <div v-if="load && searchResult.length > 0"
             class="grid w-100 p-[10px] gap-[15px] md:gap-[30px] xl:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 mx-auto max-w-[1350px]">
             <MyCard v-for="anime in searchResult" :key="anime.id" :card="anime.attributes" :id="anime.id" />
         </div>
-        <div v-if="!pending && load && searchResult.length == 0"
+        <div v-if="load && searchResult.length == 0"
             class="grid w-100 p-[10px] gap-[15px] md:gap-[30px] xl:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 mx-auto max-w-[1350px]">
             <MyCard v-for="anime in animes.data" :key="anime.id" :card="anime.attributes" :id="anime.id" />
         </div>

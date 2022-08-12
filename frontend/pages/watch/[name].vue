@@ -10,6 +10,9 @@ onMounted(async () => {
     loadAnime.value = true
 })
 
+const page = ref()
+const { isFullscreen, enter, exit, toggle } = useFullscreen(page)
+
 // const WatchTitle = defineAsyncComponent(() => import('~/components/watch/Title'))
 // const WatchAnimeInfo = defineAsyncComponent(() => import('~/components/watch/AnimeInfo'))
 // const WatchPlayer = defineAsyncComponent(() => import('~/components/watch/Player'))
@@ -33,7 +36,7 @@ onMounted(async () => {
             class="absolute top-0 left-0 w-screen bg-neutral z-50 flex justify-center items-center">
             <img src="/loading.gif" class="rounded-full w-[100px]" alt="">
         </div>
-        <div v-if="!pending && loadAnime" class="">
+        <div v-if="!pending && loadAnime" ref="page" class="">
             <div v-if="anime.data[0].attributes.background.data != null"
                 class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
                 <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]"
@@ -59,11 +62,11 @@ onMounted(async () => {
 
                         <WatchPlayer :anime="anime.data[0]" />
 
-                        <WatchDesc :anime="anime.data[0]" />
+                        <WatchDesc v-if="!isFullscreen" :anime="anime.data[0]" />
 
-                        <WatchInfo :anime="anime.data[0]" />
+                        <WatchInfo v-if="!isFullscreen" :anime="anime.data[0]" />
 
-                        <WatchComents :url="router.currentRoute._value.params.name" />
+                        <WatchComents v-if="!isFullscreen" :url="router.currentRoute._value.params.name" />
                     </div>
                 </div>
             </div>

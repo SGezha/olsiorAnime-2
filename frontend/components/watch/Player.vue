@@ -329,7 +329,7 @@ const toggleFullScreen = () => {
                                 </template>
                             </VideoScrubber>
 
-                            <div class="grid grid-cols-5 md:flex md:items-center mt-[10px] gap-[10px]">
+                            <div class="grid grid-cols-4 md:flex md:items-center mt-[10px] gap-[10px]">
                                 <button class="btn videoBtn" @click="playing = !playing">
                                     <svg v-if="!playing" xmlns="http://www.w3.org/2000/svg"
                                         xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
