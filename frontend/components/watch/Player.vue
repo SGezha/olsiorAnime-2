@@ -346,17 +346,6 @@ const toggleFullScreen = () => {
                                                 </svg>
                                                 <span>{{ $t('telegramlink') }}</span>
                                             </VideoMenuItem>
-                                            <VideoMenuItem @click="openLink(anime.attributes.episodes[current].heroku)">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--ph" width="32" height="32"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256">
-                                                    <path fill="currentColor"
-                                                        d="M71.5 88.5a12 12 0 0 1 17-17L116 99V24a12 12 0 0 1 24 0v75l27.5-27.5a12 12 0 0 1 17 17l-48 48a12.1 12.1 0 0 1-17 0ZM224 116h-39.4a12 12 0 0 0 0 24H220v56H36v-56h35.4a12 12 0 0 0 0-24H32a20.1 20.1 0 0 0-20 20v64a20.1 20.1 0 0 0 20 20h192a20.1 20.1 0 0 0 20-20v-64a20.1 20.1 0 0 0-20-20Zm-20 52a16 16 0 1 0-16 16a16 16 0 0 0 16-16Z">
-                                                    </path>
-                                                </svg>
-                                                <span>{{ $t('downloadVideo') }}</span>
-                                            </VideoMenuItem>
                                             <VideoMenuItem v-if="supportsPictureInPicture"
                                                 @click="() => { togglePictureInPicture(); close(); }">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -371,6 +360,17 @@ const toggleFullScreen = () => {
                                                     </path>
                                                 </svg>
                                                 <span>{{ $t('pip') }}</span>
+                                            </VideoMenuItem>
+                                            <VideoMenuItem @click="openLink(anime.attributes.episodes[current].heroku)">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                                                    role="img" class="iconify iconify--ph" width="32" height="32"
+                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256">
+                                                    <path fill="currentColor"
+                                                        d="M71.5 88.5a12 12 0 0 1 17-17L116 99V24a12 12 0 0 1 24 0v75l27.5-27.5a12 12 0 0 1 17 17l-48 48a12.1 12.1 0 0 1-17 0ZM224 116h-39.4a12 12 0 0 0 0 24H220v56H36v-56h35.4a12 12 0 0 0 0-24H32a20.1 20.1 0 0 0-20 20v64a20.1 20.1 0 0 0 20 20h192a20.1 20.1 0 0 0 20-20v-64a20.1 20.1 0 0 0-20-20Zm-20 52a16 16 0 1 0-16 16a16 16 0 0 0 16-16Z">
+                                                    </path>
+                                                </svg>
+                                                <span>{{ $t('downloadVideo') }}</span>
                                             </VideoMenuItem>
                                             <VideoMenuItem
                                                 v-if="anime.attributes.episodes[current].heroku != undefined">
