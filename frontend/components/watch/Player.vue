@@ -100,7 +100,7 @@ watch(currentTime, (val) => {
     }))
     if (props.anime.attributes.episodes[current.value].chat && chatShow) {
         let temp = chat.value.filter(a => a.time.timesec < now)
-        nowChat.value = temp.slice(0, 200)
+        nowChat.value = temp
         setTimeout(() => {
             if (chatShow && document.querySelector('.chat')) document.querySelector('.chat').scrollTo({ top: document.querySelector('.chat').scrollHeight })
         }, 50)
