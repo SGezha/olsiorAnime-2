@@ -15,7 +15,7 @@ if (props.anime.attributes.arches == null && props.anime.attributes.seasons == n
 
 const deleteMark = (ep, mark) => {
     let needEp = props.anime.attributes.episodes.find(a => a.title == ep.title)
-    needEp.timeMark = needEp.timeMark.filter(a => a.title != mark.title && a.author != mark.author)
+    needEp.timeMark = needEp.timeMark.filter(a => a.title == mark.title && a.author == mark.author)
     update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
 }
 </script>
