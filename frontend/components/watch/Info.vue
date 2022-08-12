@@ -20,8 +20,7 @@ const deleteMark = (ep, mark) => {
         console.log(needMark)
         needEp.timeMark.splice(needMark, 1)
     }
-    console.log(needEp.timeMark)
-    // update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
+    update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
 }
 </script>
 
