@@ -74,7 +74,8 @@ const changeEpisode = (id, autoplay, videoTime) => {
             }
             if (autoplay) {
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    document.querySelector('video').play()
+                    if (videoTime) document.querySelector('video').currentTime = videoTime
+                    document.querySelector('video').play() 
                 })
             }
         }
@@ -217,6 +218,14 @@ const formatTime = (duration) => {
     return ret
 }
 
+watch(isFullscreen, (val) => {
+    if (val) {
+        document.querySelector('body').style.overflow = 'hidden'
+    } else {
+        document.querySelector('body').style.overflow = null
+    }
+})
+
 const toggleFullScreen = () => {
     if (!isFullscreen.value) {
         if (document.documentElement.requestFullscreen) {
@@ -226,7 +235,6 @@ const toggleFullScreen = () => {
         } else if (document.documentElement.msRequestFullscreen) {
             document.documentElement.msRequestFullscreen();
         }
-        document.querySelector('body').style.overflow = 'hidden'
         lockOrientation('landscape-primary')
     } else {
         if (document.exitFullscreen) {
@@ -236,7 +244,6 @@ const toggleFullScreen = () => {
         } else if (document.msExitFullscreen) {
             document.msExitFullscreen();
         }
-        document.querySelector('body').style.overflow = null
         lockOrientation('portrait-primary')
         unlockOrientation()
     }
@@ -248,8 +255,8 @@ const toggleFullScreen = () => {
     <div v-if="anime.attributes">
         <div class="mt-[10px] transition" :class="{ 'fixed left-0 top-0 mt-0 z-99 transition-all': isFullscreen }">
             <div class="outline-none relative" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
-                @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen"
-                @keydown.m="muted = !muted" ref="player">
+                @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen" @keydown.а="toggleFullScreen"
+                @keydown.m="muted = !muted" @keydown.м="muted = !muted" ref="player">
                 <div class="relative bg-black rounded-md shadow overflow-hidden  flex items-center"
                     :class="{ ' h-screen w-screen rounded-none': isFullscreen, 'h-[50vh] min-h-[50vh] w-100 max-h-[50vh]': !isFullscreen }">
 
@@ -257,7 +264,7 @@ const toggleFullScreen = () => {
                         <video @keydown.prevent.space="playing = !playing" ref="video"
                             class="block h-100 transition-all w-[100%]"
                             :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }"
-                            @loadeddata="timeMarkPosition" :loop="loop"
+                            @loadeddata="timeMarkPosition" :loop="loop" @ended="changeEpisode(current + 1, true)"
                             :style="{ width: `${chatShow ? 100 - chatSize : 100}%` }" @click="playing = !playing" />
                         <div v-if="anime.attributes.episodes[current].chat != undefined"
                             class="chat p-[10px] overflow-y-auto overflow-x-hidden flex flex-col relative transition-all right-0"
