@@ -413,7 +413,7 @@ const toggleFullScreen = () => {
                                                 </svg>
                                                 <span>{{ $t('pip') }}</span>
                                             </VideoMenuItem>
-                                            <VideoMenuItem v-if="twName" @click="markCreateModal = true; close()">
+                                            <VideoMenuItem v-if="twName && anime.attributes.maxepisodes < 100" @click="markCreateModal = true; close()">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                                                     role="img" class="iconify iconify--uil" width="24" height="24"
