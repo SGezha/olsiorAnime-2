@@ -76,10 +76,10 @@ const saveBg = async () => {
                     :src="user.data[0] != null ? user.data[0].attributes.bg : userBg" alt="">
             </div>
             <div class="max-w-[1350px] mx-auto px-[10px] pb-[20px]">
-                <div class="flex">
-                    <img v-if="comments.data[0]" class="w-[182px] h-[182px] bg-neutral rounded-md mr-[20px]"
+                <div class="flex flex-col md:flex-row gap-[20px] items-center">
+                    <img v-if="comments.data[0]" class="w-[182px] h-[182px] bg-neutral rounded-md"
                         :src="comments.data[0].attributes.img" alt="">
-                    <div class=" text-lg">
+                    <div class="text-lg">
                         <div class="text-[40px] font-bold">
                             {{ router.currentRoute._value.params.name }}
                             <div v-if="twName == router.currentRoute._value.params.name" @click="isOpen = true"
@@ -112,11 +112,11 @@ const saveBg = async () => {
                         <div v-if="animes != null" class="flex flex-col gap-[10px]">
                             <div class="flex flex-col md:flex-row w-full bg-base-300 gap-[10px] rounded-md p-[20px] relative max-h-[500px] md:h-[300px]"
                                 v-for="an in profiles.data[0].animes">
-                                <div class="h-full relative">
+                                <a :href="`/watch/${animes.data.find(a => a.id == an.anime).attributes.url}`" class="h-full relative">
                                     <img class="h-full w-[100px] md:w-[200px] rounded-md object-cover"
                                         :src="`${config.public.apiBase}${animes.data.find(a => a.id == an.anime).attributes.poster.data.attributes.url}`"
                                         alt="">
-                                </div>
+                                </a>
                                 <div class="h-full w-full overflow-y-auto">
                                     <div v-for="msg in an.msgs" class="w-full text-sm md:text-md">
                                         <span class="text-primary">{{ router.currentRoute._value.params.name
