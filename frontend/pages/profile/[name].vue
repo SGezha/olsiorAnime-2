@@ -110,15 +110,15 @@ const saveBg = async () => {
                     </div>
                     <div class="collapse-content">
                         <div v-if="animes != null" class="flex flex-col gap-[10px]">
-                            <div class="flex w-full bg-base-300 rounded-md p-[20px] relative h-[300px]"
+                            <div class="flex flex-col md:flex-row w-full bg-base-300 gap-[10px] rounded-md p-[20px] relative max-h-[500px] md:h-[300px]"
                                 v-for="an in profiles.data[0].animes">
                                 <div class="h-full relative">
-                                    <img class="h-full w-[200px] rounded-md object-cover"
+                                    <img class="h-full w-[100px] md:w-[200px] rounded-md object-cover"
                                         :src="`${config.public.apiBase}${animes.data.find(a => a.id == an.anime).attributes.poster.data.attributes.url}`"
                                         alt="">
                                 </div>
-                                <div class="h-full ml-[10px] w-full overflow-y-auto">
-                                    <div v-for="msg in an.msgs" class="w-full">
+                                <div class="h-full w-full overflow-y-auto">
+                                    <div v-for="msg in an.msgs" class="w-full text-sm md:text-md">
                                         <span class="text-primary">{{ router.currentRoute._value.params.name
                                         }}</span>({{ msg.episode }}): {{ msg.text }}
                                     </div>
