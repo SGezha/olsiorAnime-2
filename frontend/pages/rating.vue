@@ -5,7 +5,7 @@ const load = useState(() => false)
 const { find } = useStrapi4()
 const { data: top, pending, error, refresh } = await useAsyncData(
     'top',
-    () => $fetch(`http://localhost:8080/server-api/gettop?page=${router.currentRoute._value.query.page != undefined ? router.currentRoute._value.query.page : '1'}`)
+    () => $fetch(`https://smotrel.net/server-api/gettop?page=${router.currentRoute._value.query.page != undefined ? router.currentRoute._value.query.page : '1'}`)
 )
 
 </script>

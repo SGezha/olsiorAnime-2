@@ -267,7 +267,7 @@ const toggleFullScreen = () => {
                             class="chat p-[10px] overflow-y-auto overflow-x-hidden flex flex-col relative transition-all right-0"
                             :style="{ width: `${chatShow ? chatSize : 0}%`, display: `${chatShow ? 'flex' : 'none'}` }">
                             <div v-for="msg in nowChat" :key="msg" class="block w-100">
-                                <span @click="openLink(`http://localhost:8080/profile/${msg.author}`)" class="font-bold cursor-pointer" :style="{ color: msg.color }">{{ msg.author }}</span>:
+                                <span @click="openLink(`https://smotrel.net/profile/${msg.author}`)" class="font-bold cursor-pointer" :style="{ color: msg.color }">{{ msg.author }}</span>:
                                 <span class="text-white" v-html="msg.text"></span>
                             </div>
                         </div>
