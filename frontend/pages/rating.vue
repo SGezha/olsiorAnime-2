@@ -19,8 +19,8 @@ const { data: top, pending, error, refresh } = await useAsyncData(
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Ник</th>
-                        <th>Количество сообщений</th>
+                        <th>{{ $t('topnick') }}</th>
+                        <th>{{ $t('countmsg') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,7 +34,7 @@ const { data: top, pending, error, refresh } = await useAsyncData(
         </div>
         <div class="w-full flex justify-center mt-[15px] gap-[5px]">
             <a :href="`/rating?page=${router.currentRoute._value.query.page > 1 ? router.currentRoute._value.query.page - 1 : 1}`" class="btn btn-primary">«</a>
-            <button class="btn btn-primary">Страница {{ router.currentRoute._value.query.page }}</button>
+            <button class="btn btn-primary">{{ $t('toppage') }} {{ router.currentRoute._value.query.page }}</button>
             <a :href="`/rating?page=${parseInt(router.currentRoute._value.query.page) + 1}`" class="btn btn-primary">»</a>
         </div>
     </div>

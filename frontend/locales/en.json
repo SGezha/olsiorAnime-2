@@ -39,5 +39,13 @@
     "markname": "Label name",
     "marktime": "Time label",
     "markbtn": "Add a label",
-    "mark": "labels"
+    "mark": "labels",
+    "allmsg": "Total messages",
+    "place": "Place in the rating",
+    "animecom": "Anime that commented on",
+    "bgurl": "Link to the background",
+    "savebg": "Save",
+    "countmsg": "Number of messages",
+    "topnick": "Nick",
+    "toppage": "Page"
 }

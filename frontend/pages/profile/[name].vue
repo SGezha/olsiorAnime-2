@@ -35,16 +35,18 @@ const saveBg = async () => {
             create('profiles', {
                 name: router.currentRoute._value.params.name,
                 bg: inputUrl.value
+            }).then(() => {
+                window.location = '/profile/' + router.currentRoute._value.params.name
             })
         } else {
             _delete('profiles', res.data[0].id)
             create('profiles', {
                 name: router.currentRoute._value.params.name,
                 bg: inputUrl.value
+            }).then(() => {
+                window.location = '/profile/' + router.currentRoute._value.params.name
             })
         }
-        user.value = find('profiles', { populate: "*", filters: { name: router.currentRoute._value.params.name } })
-        isOpen.value = false
     })
 }
 
@@ -69,7 +71,7 @@ const saveBg = async () => {
 
         <div v-if="!pending && comments.data != null && profiles.place != -1" ref="page" class="">
             <div class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
-                <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]" :src="user.data[0].attributes.bg ? user.data[0].attributes.bg : userBg" alt="">
+                <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]" :src="user.data[0] != null ? user.data[0].attributes.bg : userBg" alt="">
             </div>
             <div class="max-w-[1350px] mx-auto px-[10px] pb-[20px]">
                 <div class="flex">
@@ -90,10 +92,10 @@ const saveBg = async () => {
                             </div>
                         </div>
                         <div class="mt-[10px]">
-                            Всего сообщений: {{ profiles.data[0].countMsg }}
+                            {{ $t('allmsg') }}: {{ profiles.data[0].countMsg }}
                         </div>
                         <div class="">
-                            Место в рейтинге: <a class="link"
+                            {{ $t('place') }}: <a class="link"
                                 :href="`/rating?page=${parseInt(profiles.place / 50) + 1}`">№{{ profiles.place + 1
                                 }}</a>
                         </div>
@@ -101,7 +103,7 @@ const saveBg = async () => {
                 </div>
                 <div tabindex="0" class="collapse collapse-arrow bg-neutral rounded-box mt-[15px]">
                     <div class="collapse-title text-xl font-medium text-neutral-content">
-                        Аниме которые комментировал:
+                        {{ $t('animecom') }}:
                     </div>
                     <div class="collapse-content">
                         <div v-if="animes != null" class="flex flex-col gap-[10px]">
@@ -127,12 +129,12 @@ const saveBg = async () => {
                     <div @click="isOpen = false" class="cursor-pointer absolute left-0 top-0 w-full h-full bg-black bg-opacity-50 z-10"></div>
                     <div class="form-control max-w-[600px] bg-neutral p-[20px] rounded-md z-20">
                         <label class="label">
-                            <span class="label-text">Ссылка на фон:</span>
+                            <span class="label-text">{{ $t('bgurl') }}:</span>
                         </label>
                         <label class="input-group">
                             <input v-model="inputUrl" type="text" placeholder="https://site.com/img.jpg"
                                 class="input input-primary input-bordered w-full" />
-                            <button @click="saveBg" class="btn btn-primary">Сохранить</button>
+                            <button @click="saveBg" class="btn btn-primary">{{ $t('savebg') }}</button>
                         </label>
                     </div>
                 </div>
