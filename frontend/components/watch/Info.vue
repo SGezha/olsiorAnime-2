@@ -24,8 +24,6 @@ const deleteMark = (id) => {
     })
 }
 
-
-
 const filterMarks = computed(() => {
     let haveMarks = []
     let result = []
@@ -35,6 +33,7 @@ const filterMarks = computed(() => {
         }
     })
     haveMarks.forEach(ind => {
+        props.anime.attributes.episodes[ind].id = ind
         result.push(props.anime.attributes.episodes[ind])
     })
     return result
@@ -87,7 +86,7 @@ const filterMarks = computed(() => {
             <div class="text-lg font-bold">
                 {{ ep.title }}
             </div>
-            <div v-for="mark in anime.attributes.timemarks.data.filter(a => a.attributes.epId == ind)" class="flex items-center">
+            <div v-for="mark in anime.attributes.timemarks.data.filter(a => a.attributes.epId == ep.id)" class="flex items-center">
                 <div class="">{{ mark.attributes.title }} - {{ mark.attributes.time }} {{ mark.attributes.author ? `(${mark.attributes.author})` : '' }}</div>
                 <button @click="deleteMark(mark.id)" v-if="mark.attributes.author == twName && twName != undefined" class="text-error">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22"
