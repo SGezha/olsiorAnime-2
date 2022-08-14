@@ -31,7 +31,7 @@ const saveBg = async () => {
     find('profiles', {
         populate: "*", filters: { name: router.currentRoute._value.params.name }
     }).then(res => {
-        if(res.data.length == 0) {
+        if (res.data.length == 0) {
             create('profiles', {
                 name: router.currentRoute._value.params.name,
                 bg: inputUrl.value
@@ -39,12 +39,13 @@ const saveBg = async () => {
                 window.location = '/profile/' + router.currentRoute._value.params.name
             })
         } else {
-            _delete('profiles', res.data[0].id)
-            create('profiles', {
-                name: router.currentRoute._value.params.name,
-                bg: inputUrl.value
-            }).then(() => {
-                window.location = '/profile/' + router.currentRoute._value.params.name
+            _delete('profiles', res.data[0].id).then(() => {
+                create('profiles', {
+                    name: router.currentRoute._value.params.name,
+                    bg: inputUrl.value
+                }).then(() => {
+                    window.location = '/profile/' + router.currentRoute._value.params.name
+                })
             })
         }
     })
@@ -71,7 +72,8 @@ const saveBg = async () => {
 
         <div v-if="!pending && comments.data != null && profiles.place != -1" ref="page" class="">
             <div class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
-                <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]" :src="user.data[0] != null ? user.data[0].attributes.bg : userBg" alt="">
+                <img loading="lazy" class="w-full object-cover object-center h-[800px] max-h-[800px]"
+                    :src="user.data[0] != null ? user.data[0].attributes.bg : userBg" alt="">
             </div>
             <div class="max-w-[1350px] mx-auto px-[10px] pb-[20px]">
                 <div class="flex">
@@ -80,7 +82,8 @@ const saveBg = async () => {
                     <div class=" text-lg">
                         <div class="text-[40px] font-bold">
                             {{ router.currentRoute._value.params.name }}
-                            <div v-if="twName == router.currentRoute._value.params.name" @click="isOpen = true" for="my-modal-bg"
+                            <div v-if="twName == router.currentRoute._value.params.name" @click="isOpen = true"
+                                for="my-modal-bg"
                                 class="inline-block static text-neutral-content cursor-pointer bg-neutral p-[5px] rounded-md">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                     aria-hidden="true" role="img" class="iconify iconify--material-symbols" width="25"
@@ -125,8 +128,10 @@ const saveBg = async () => {
                     </div>
                 </div>
 
-                <div v-if="isOpen" class="fixed left-0 top-0 w-full flex justify-center items-center z-50 " style="height: calc(100vh - calc(100vh - 100%))">
-                    <div @click="isOpen = false" class="cursor-pointer absolute left-0 top-0 w-full h-full bg-black bg-opacity-50 z-10"></div>
+                <div v-if="isOpen" class="fixed left-0 top-0 w-full flex justify-center items-center z-50 "
+                    style="height: calc(100vh - calc(100vh - 100%))">
+                    <div @click="isOpen = false"
+                        class="cursor-pointer absolute left-0 top-0 w-full h-full bg-black bg-opacity-50 z-10"></div>
                     <div class="form-control max-w-[600px] bg-neutral p-[20px] rounded-md z-20">
                         <label class="label">
                             <span class="label-text">{{ $t('bgurl') }}:</span>
