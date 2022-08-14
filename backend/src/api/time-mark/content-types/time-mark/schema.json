@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "time_marks",
+  "info": {
+    "singularName": "time-mark",
+    "pluralName": "time-marks",
+    "displayName": "timeMark",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "author": {
+      "type": "string"
+    },
+    "time": {
+      "type": "string"
+    },
+    "epId": {
+      "type": "integer"
+    },
+    "anime": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::anime.anime",
+      "inversedBy": "timemarks"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}

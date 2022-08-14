@@ -1,7 +1,7 @@
 <script setup>
 import Hls from 'hls.js'
 import { useStorage } from '@vueuse/core'
-const { update } = useStrapi4()
+const { update, find, create, findOne } = useStrapi4()
 const router = useRouter()
 const config = useRuntimeConfig()
 const props = defineProps({
@@ -113,6 +113,7 @@ const openLink = (url) => {
 }
 
 const getChat = async () => {
+    chat.value = []
     fetch('https://cdn.glitch.global/513930f1-8551-4a01-b9f0-59a88e2429c1/emotes.json?v=1644150481352')
         .then(res => res.json())
         .then(async emotes => {
@@ -180,17 +181,13 @@ const timeMarkPosition = () => {
 }
 
 const createMark = () => {
-    const needEp = props.anime.attributes.episodes[current.value]
-    if (!needEp['timeMark']) {
-        needEp['timeMark'] = []
-    }
-    needEp['timeMark'].push({
-        title: markTitle.value,
-        time: formatDuration(currentTime.value),
-        author: twName
-    })
-    update('animes', props.anime.id, { episodes: props.anime.attributes.episodes }).then(() => {
-        timeMarkPosition()
+    create('time-marks', { anime: props.anime.id, time: formatDuration(currentTime.value), author: twName.value, title: markTitle.value, epId: current.value }).then(async () => {
+        findOne('animes', props.anime.id, { filters: { url: router.currentRoute._value.params.name }, populate: '*' }).then((res) => {
+            props.anime.attributes.timemarks = res.data.attributes.timemarks
+            setTimeout(() => {
+                timeMarkPosition()
+            }, 100)
+        })
         markCreateModal.value = false
     })
 }
@@ -315,16 +312,16 @@ const toggleFullScreen = () => {
 
                     <client-only>
                         <div class="absolute video-menu bottom-0 bg-neutral bg-opacity-70 video-menu w-[100%] p-[20px] h-[100px] transition-all"
-                            :class="{ 'translate-y-[110px] opacity-0': isOutside || idle, 'pt-[30px] h-[110px]': anime.attributes.episodes[current].timeMark }">
+                            :class="{ 'translate-y-[110px] opacity-0': isOutside || idle, 'pt-[30px] h-[110px]': anime.attributes.timemarks.data.filter(a => a.attributes.epId == current).length > 0 }">
 
-                            <div v-if="anime.attributes.episodes[current].timeMark"
+                            <div v-if="anime.attributes.timemarks.data.filter(a => a.attributes.epId == current).length > 0"
                                 class="absolute top-[5px] flex w-full text-sm text-neutral-content"
                                 :style="{ width: `${timeMarksWidth.toFixed(0)}px` }">
-                                <div v-for="(mark, ind) in anime.attributes.episodes[current].timeMark"
+                                <div v-for="(mark, ind) in anime.attributes.timemarks.data.filter(a => a.attributes.epId == current)"
                                     :class="{ 'tooltip-open': timeMarkLoaded }"
                                     class="absolute timeMark tooltip tooltip-primary top-[24px] px-[5px] text-sm text-[rgba(0,0,0,0)] select-none"
-                                    :data-tip="mark.title" :data-duration="duration" :data-time="mark.time">{{
-                                            mark.title
+                                    :data-tip="mark.attributes.title" :data-duration="duration" :data-time="mark.attributes.time">{{
+                                            mark.attributes.title
                                     }}</div>
                             </div>
 

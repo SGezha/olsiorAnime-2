@@ -94,6 +94,12 @@
     "anime": {
       "type": "uid",
       "targetField": "url"
+    },
+    "timemarks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::time-mark.time-mark",
+      "mappedBy": "anime"
     }
   }
 }

@@ -1,5 +1,8 @@
 <script setup>
-const { update } = useStrapi4()
+import { Result } from 'postcss';
+
+const router = useRouter()
+const { update, delete: _delete, findOne } = useStrapi4()
 const tab = useState(() => 'season')
 const twName = useCookie('tw_login')
 
@@ -13,14 +16,29 @@ const props = defineProps({
 if (props.anime.attributes.seasons == null) tab.value = 'arches'
 if (props.anime.attributes.arches == null && props.anime.attributes.seasons == null) tab.value = 'ep'
 
-const deleteMark = (ep, mark) => {
-    let needEp = props.anime.attributes.episodes.find(a => a.title == ep.title)
-    let needMark = needEp.timeMark.findIndex(a => a.title == mark.title && a.author == twName.value && a.time == mark.time)
-    if (needMark > -1) { 
-        needEp.timeMark.splice(needMark, 1)
-    }
-    update('animes', props.anime.id, { episodes: props.anime.attributes.episodes })
+const deleteMark = (id) => {
+    _delete('time-marks', id).then(() => {
+        findOne('animes', props.anime.id, { filters: { url: router.currentRoute._value.params.name }, populate: '*' }).then((res) => {
+            props.anime.attributes.timemarks = res.data.attributes.timemarks
+        })
+    })
 }
+
+
+
+const filterMarks = computed(() => {
+    let haveMarks = []
+    let result = []
+    props.anime.attributes.timemarks.data.forEach(ep => {
+        if(haveMarks.indexOf(ep.attributes.epId) == -1) {
+            haveMarks.push(ep.attributes.epId)
+        }
+    })
+    haveMarks.forEach(ind => {
+        result.push(props.anime.attributes.episodes[ind])
+    })
+    return result
+})
 </script>
 
 <template>
@@ -65,13 +83,13 @@ const deleteMark = (ep, mark) => {
     </div>
 
     <div class="mt-[15px] w-[100%] flex flex-wrap gap-[5px] showTab text-neutral-content" v-if="tab == 'mark'">
-        <div v-for="(ep, ind) in anime.attributes.episodes.filter(a => a.timeMark && a.timeMark.length > 0)" class="bg-neutral p-[10px] rounded-md">
+        <div v-for="(ep, ind) in filterMarks" class="bg-neutral p-[10px] rounded-md">
             <div class="text-lg font-bold">
                 {{ ep.title }}
             </div>
-            <div v-for="mark in ep.timeMark" class="flex items-center">
-                <div class="">{{ mark.title }} - {{ mark.time }} {{ mark.author ? `(${mark.author})` : '' }}</div>
-                <button @click="deleteMark(ep, mark)" v-if="mark.author == twName && twName != undefined" class="text-error">
+            <div v-for="mark in anime.attributes.timemarks.data.filter(a => a.attributes.epId == ind)" class="flex items-center">
+                <div class="">{{ mark.attributes.title }} - {{ mark.attributes.time }} {{ mark.attributes.author ? `(${mark.attributes.author})` : '' }}</div>
+                <button @click="deleteMark(mark.id)" v-if="mark.attributes.author == twName && twName != undefined" class="text-error">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22"
                         height="22" aria-hidden="true" role="img" class="iconify iconify--mdi"
                         preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">

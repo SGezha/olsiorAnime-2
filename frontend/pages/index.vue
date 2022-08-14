@@ -8,7 +8,7 @@ const { find } = useStrapi4()
 const animes = useState(() => [])
 
 onMounted(async () => {
-    animes.value = await find('animes', { pagination: { pageSize: 50 }, populate: '*' })
+    animes.value = await find('animes', { pagination: { pageSize: 50 }, populate: ['poster'] })
     sortAnime(animeSort.value)
     load.value = true
 })
