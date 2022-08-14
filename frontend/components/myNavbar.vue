@@ -58,6 +58,8 @@ const logout = () => {
                     <ul tabindex="0"
                         class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-neutral text-neutral-content rounded-box w-52">
                         <li v-if="twName"><a>{{ twName }}</a></li>
+                        <li v-if="twName"><a :href="`/profile/${twName}`">Профиль</a></li>
+                        <li v-if="twName"><a href="/rating?page=1">Рейтинг</a></li>
                         <li @click="logout" v-if="twName"><a>{{ $t('logout') }}</a></li>
                         <li v-else><a href="/server-api/authorize">{{ $t('login') }}</a></li>
                     </ul>

@@ -45,12 +45,12 @@ const deleteCom = async (id) => {
         <div v-if="comments != null" class="mt-[15px] flex flex-col gap-[10px]">
             <div v-for="com in comments.data" class="bg-neutral px-[20px] py-[20px] rounded-md relative">
                 <div class="flex justify-between items-center">
-                    <div class="flex items-center">
+                    <a :href="`/profile/${com.attributes.author}`" class="flex items-center">
                         <div class="bg-neutral-content w-[40px] rounded-full mr-[10px]">
                             <img class="w-full h-full" :src="com.attributes.img" alt="">
                         </div>
                         <div class="text-lg font-bold text-neutral-content">{{ com.attributes.author }}</div>
-                    </div>
+                    </a>
                     <div class="text-neutral-content">{{ new Date(com.attributes.createdAt).toLocaleDateString() }} {{
                     new Date(com.attributes.createdAt).toLocaleTimeString() }}</div>
                 </div>
