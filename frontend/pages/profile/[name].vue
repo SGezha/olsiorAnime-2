@@ -9,7 +9,7 @@ const isOpen = useState(() => false)
 const userBg = useState(() => '/343502.png')
 const { data: profiles, pending, error, refresh } = await useAsyncData(
     'profiles',
-    () => $fetch(`http://localhost:8080/server-api/getprofile?name=${router.currentRoute._value.params.name}`)
+    () => $fetch(`https://smotrel.net/server-api/getprofile?name=${router.currentRoute._value.params.name}`)
 )
 
 const { data: comments } = await useAsyncData(
