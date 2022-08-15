@@ -9,9 +9,13 @@ const props = defineProps({
     }
 })
 const { findOne, find, create, delete: _delete } = useStrapi4()
-const { pending, data: comments } = useAsyncData('comments', () => find('comments', { populate: '*', pagination: { pageSize: 100 }, sort: 'createdAt:desc', filters: { url: props.url } }))
+const comments = useState(() => null)
 const disableCom = useState(() => false)
 const msg = useState(() => '')
+onMounted(async () => {
+    comments.value = await find('comments', { populate: '*', pagination: { pageSize: 100 }, sort: 'createdAt:desc', filters: { url: props.url } })
+})
+
 const sendCom = async () => {
     if(msg.value == '' || disableCom.value) return
     disableCom.value = true
