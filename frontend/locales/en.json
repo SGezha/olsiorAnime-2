@@ -47,5 +47,10 @@
     "savebg": "Save",
     "countmsg": "Number of messages",
     "topnick": "Nick",
-    "toppage": "Page"
+    "toppage": "Page",
+    "dontep1": "If you have lost the series, ",
+    "dontep2": "clear the browser CACHE and refresh the page",
+    "dontep3": "and they will have to appear.",
+    "warning": "Important",
+    "bugreport": "If you find a bug, write to me"
 }
