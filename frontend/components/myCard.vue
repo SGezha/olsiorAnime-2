@@ -13,7 +13,7 @@ defineProps({
 </script>
 
 <template>
-    <NuxtLink :to="`watch/${card.url}`"
+    <NuxtLink :to="`/watch/${card.url}`"
         class="w-100 showAnimation relative will-change-transform transition-transform hover:scale-[102%]">
         <div class="card rounded-md">
             <figure class="w-100 h-[30vh] lg:h-[360px]">

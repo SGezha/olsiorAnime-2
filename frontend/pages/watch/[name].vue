@@ -2,14 +2,13 @@
 const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
-const { pending, data: seoAnime } = useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' }))
+const { pending, data: seoAnime } = await useAsyncData('anime', () => find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' }))
 const anime = useState(() => [])
 const loadAnime = useState(() => false)
 onMounted(async () => {
     anime.value = await find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' })
     loadAnime.value = true
 })
-
 const page = ref()
 const { isFullscreen, enter, exit, toggle } = useFullscreen(page)
 
@@ -18,6 +17,11 @@ const { isFullscreen, enter, exit, toggle } = useFullscreen(page)
 // const WatchPlayer = defineAsyncComponent(() => import('~/components/watch/Player'))
 // const WatchDesc = defineAsyncComponent(() => import('~/components/watch/Desc'))
 // const WatchInfo = defineAsyncComponent(() => import('~/components/watch/Info'))
+
+onBeforeMount(() => {
+    loadAnime.value = false
+    anime.value = []
+})
 </script>
 
 <template>
@@ -60,7 +64,7 @@ const { isFullscreen, enter, exit, toggle } = useFullscreen(page)
                             <WatchTitle :anime="anime.data[0]" />
                         </div>
 
-                        <WatchPlayer :anime="anime.data[0]" />
+                        <WatchPlayer v-if="loadAnime" :anime="anime.data[0]" />
 
                         <WatchDesc v-if="!isFullscreen" :anime="anime.data[0]" />
 

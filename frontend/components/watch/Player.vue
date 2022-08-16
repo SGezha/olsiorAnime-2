@@ -1,6 +1,5 @@
 <script setup>
 import Hls from 'hls.js'
-import { useStorage } from '@vueuse/core'
 const { update, find, create, findOne } = useStrapi4()
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -36,9 +35,9 @@ onMounted(() => {
     let saved = JSON.parse(localStorage.getItem(router.currentRoute._value.params.name))
     if (props.anime != null) {
         if (Hls.isSupported()) {
-            hls.loadSource(props.anime.attributes.episodes[current.value].hls)
+            hls.loadSource(props.anime.attributes.episodes[0].hls)
             hls.attachMedia(document.querySelector('video'))
-            if (props.anime.attributes.episodes[current.value].chat) getChat()
+            if (props.anime.attributes.episodes[0].chat) getChat()
         } else {
             video.value.src = props.anime.attributes.episodes[current.value].hls
         }
@@ -48,6 +47,11 @@ onMounted(() => {
             currentTime.value = saved.time
         }
     }
+})
+
+onBeforeMount(() => {
+    current.value = 0
+    props.anime.value = null
 })
 
 const changeEpisode = (id, autoplay, videoTime) => {
@@ -168,7 +172,8 @@ const getRandomColor = () => {
 const scruWidth = ref(null)
 const { width: timeMarksWidth } = useElementBounding(scruWidth)
 const timeMarkPosition = () => {
-    document.querySelector('.video-menu').style.width = "100.1%"
+    let menu = document.querySelector('.video-menu')
+    if(menu) menu = "100.1%"
     let timeMarks = document.querySelectorAll('.timeMark')
     timeMarks.forEach(m => {
         let left = calcMarkLeft(m.dataset.duration, m.dataset.time)
@@ -176,7 +181,7 @@ const timeMarkPosition = () => {
     })
     timeMarkLoaded.value = true
     setTimeout(() => {
-        document.querySelector('.video-menu').style.width = "100%"
+        if(menu) document.querySelector('.video-menu').style.width = "100%"
     }, 100)
 }
 
@@ -249,7 +254,7 @@ const toggleFullScreen = () => {
 </script>
 
 <template>
-    <div v-if="anime.attributes">
+    <div v-if="anime != null">
         <div class="mt-[10px] transition" :class="{ 'fixed left-0 top-0 mt-0 z-99 transition-all': isFullscreen }">
             <div class="outline-none relative" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
                 @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen" @keydown.а="toggleFullScreen"
