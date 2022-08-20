@@ -14,11 +14,11 @@ defineProps({
 
 <template>
     <NuxtLink :to="`/watch/${card.url}`"
-        class="w-100 showAnimation relative will-change-transform transition-transform hover:scale-[102%]">
+        class="w-100 relative will-change-transform transition-transform hover:scale-[102%]">
         <div class="card rounded-md">
             <figure class="w-100 h-[30vh] lg:h-[360px]">
-                <img class="w-full h-full object-cover"
-                    :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" :alt="card.title" />
+                <img class="w-full h-full object-cover bg-base-100" loading="lazy"
+                    :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" />
             </figure>
             <div
                 class="stars flex text-md font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg top-[10px] left-[10px] gap-[5px] rounded-md px-[5px] py-[2px]">

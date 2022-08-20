@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-<div class="px-[12px] py-[16px] mt-[20px] w-full text-sm bg-neutral shadow-lg rounded-md flex flex-col gap-[5px] showAnimation">
+<div class="px-[12px] py-[16px] mt-[20px] w-full text-sm bg-neutral shadow-lg rounded-md flex flex-col gap-[5px]">
     <div class="text-neutral-content">
         <span>{{ $t('status') }}: </span>
         <span class="text-primary font-bold">{{ anime.attributes.watched ? $t('watched') : $t('watching') }}</span>

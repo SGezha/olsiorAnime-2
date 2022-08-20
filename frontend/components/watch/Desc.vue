@@ -6,13 +6,13 @@ const getSecondTitle = (data) => {
 defineProps({
     anime: {
         type: Object,
-        default: () => {}
+        default: () => { }
     }
 })
 </script>
 
 <template>
-<div v-if="anime.attributes.description != null" class="mt-[30px]">
+    <div v-if="anime.attributes.description != null" class="mt-[30px]">
         <div class="font-bold text-2xl">{{ $t('desc') }}</div>
         <div class="mt-[15px]" v-html="anime.attributes.description.split('\\n').join('<br/>')"></div>
     </div>

@@ -33,7 +33,6 @@ export default defineNuxtConfig({
             title: 'Олсиор смотрит аниме',
             meta: [
                 { charset: 'utf-8' },
-                { 'http-equiv': 'cache-control', content: 'max-age=31536000' },
                 { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
                 { name: 'yandex-verification', content: '9ef2af352f0e448e' },
                 { hid: 'Keywords', name: 'Keywords', content: 'Olsior, olsior, олсиор, Олсиор, смотрит, Смотрит, аниме, Аниме, Olsior смотрит аниме, Olsior записи аниме стримов, олсиор аниме записи, Anime, anime, наруто, блич, Naruto, bleach, Bleach, врата штейна, смотрит, аниме, записи стримов, стримы, Стримы олсиора, Записи олсиора, Olsior twitch, олсиор твитч, смотреть аниме с олсиором, смореть аниме' },

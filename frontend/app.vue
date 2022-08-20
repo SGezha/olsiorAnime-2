@@ -1,6 +1,6 @@
-
 <template>
-  <div class="bg-base-200 main-bg">
+  <div class="">
+    <div class="main-bg"></div>
     <MyNavbar />
     <div class="">
       <NuxtPage />
@@ -8,19 +8,21 @@
   </div>
 </template>
 
-<script>
-onMounted(() => {
-  navigator.serviceWorker.register('sw.js')
-    .then(function (registration) {
-      console.log('Registration successful, scope is:', registration.scope);
-    }).catch(function (err) {
-      console.log('Service worker registration failed, error:', err);
-    });
-})
-</script>
-
 <style>
+@font-face {
+    font-family: 'Minecraft';
+    src: url('/fonts/minecraft.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .main-bg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1;
   background: linear-gradient(to bottom, hsla(var(--b1) / 0.5) 0%, hsla(var(--p) / 0.15) 100%);
 }
 
