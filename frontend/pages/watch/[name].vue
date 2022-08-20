@@ -1,9 +1,4 @@
 <script setup>
-const nuxtApp = useNuxtApp()
-
-nuxtApp.hook("page:finish", () => {
-    window.scrollTo(0, 0)
-})
 const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
