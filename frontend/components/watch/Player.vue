@@ -33,7 +33,7 @@ const twName = useCookie('tw_login')
 const { playing, buffered, currentTime, duration, tracks, waiting, selectedTrack, volume, muted, isPictureInPicture, supportsPictureInPicture, togglePictureInPicture, enableTrack, disableTrack, } = controls
 const chatEl = ref(null)
 const { x, y, style } = useDraggable(chatEl, {
-    initialValue: { x: 500, y: 500 },
+    initialValue: { x: 20, y: 20 },
 })
 onMounted(() => {
     const hls = new Hls()
