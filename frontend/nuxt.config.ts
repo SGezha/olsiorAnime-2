@@ -23,7 +23,9 @@ export default defineNuxtConfig({
         { path: "/server-api", handler: "~/server-middleware/index.js" },
     ],
     colorMode: {
-        dataValue: 'theme'
+        dataValue: 'theme',
+        preference: 'system',
+        fallback: 'dark'
     },
     app: {
         head: {

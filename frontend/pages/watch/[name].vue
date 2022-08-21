@@ -1,9 +1,9 @@
 <script setup>
 const nuxtApp = useNuxtApp()
 
-nuxtApp.hook("page:finish", () => {
-    window.scrollTo(0, 0)
-})
+// nuxtApp.hook("page:finish", () => {
+//     window.scrollTo(0, 0)
+// })
 const config = useRuntimeConfig()
 const router = useRouter()
 const { findOne, find } = useStrapi4()
@@ -13,6 +13,7 @@ const loadAnime = useState(() => false)
 onMounted(async () => {
     anime.value = await find('animes', { filters: { url: router.currentRoute._value.params.name }, populate: '*' })
     loadAnime.value = true
+    window.scrollTo({top: 0, behavior: 'smooth'})
 })
 const page = ref()
 const { isFullscreen, enter, exit, toggle } = useFullscreen(page)
@@ -59,7 +60,7 @@ onBeforeMount(() => {
                             <WatchTitle :anime="anime.data[0]" />
                         </div>
                         <img loading="lazy"
-                            class="object-cover rounded-md w-full shadow-lg bg-base-100 min-h-[400px] md:max-h-[400px]"
+                            class="object-cover rounded-md w-full shadow-lg bg-base-100 min-h-[400px] max-h-[300px] md:max-h-[400px]"
                             :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`"
                             alt="">
 

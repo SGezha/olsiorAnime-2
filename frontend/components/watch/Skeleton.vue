@@ -7,12 +7,12 @@
                         <div class="font-bold text-2xl">
                             Hi there
                         </div>
-                        <div class="font-regular opacity-70 text-xl">
+                        <div class="font-regular opacity-70 md:text-xl">
                             If you're reading this, know I love you.
                         </div>
                     </div>
                     <div
-                        class="rounded-md w-full shadow-lg bg-base-100 min-h-[400px] flex justify-center items-center">
+                        class="rounded-md w-full shadow-lg bg-base-100 max-h-[300px] md:max-h-max min-h-[400px] flex justify-center items-center">
                         <div class="loadingio-spinner-ellipsis-osxz8ybcqkd">
                             <div class="ldio-dx2dx45048j">
                                 <div></div>

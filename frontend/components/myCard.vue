@@ -16,12 +16,12 @@ defineProps({
     <NuxtLink :to="`/watch/${card.url}`"
         class="w-100 relative will-change-transform transition-transform hover:scale-[102%]">
         <div class="card rounded-md">
-            <figure class="w-100 h-[30vh] lg:h-[360px]">
+            <figure class="w-100 h-[30vh] max-h-[250px] sm:max-h-[300px] md:max-h-[360px] md:h-[360px]">
                 <img class="w-full h-full object-cover bg-base-100" loading="lazy"
                     :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" />
             </figure>
             <div
-                class="stars flex text-md font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg top-[10px] left-[10px] gap-[5px] rounded-md px-[5px] py-[2px]">
+                class="stars flex text-sm md:text-md font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg top-[10px] left-[10px] gap-[5px] rounded-md px-[5px] py-[2px]">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                     role="img" class="iconify iconify--material-symbols" width="18" height="18"
                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
@@ -32,7 +32,7 @@ defineProps({
                 {{ new Date(card.date).toLocaleDateString() }}
             </div>
             <div v-if="card.stars > 0"
-                class="stars flex text-lg font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg bottom-[10px] right-[10px] rounded-md px-[5px] py-[2px]">
+                class="stars flex md:text-lg font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg bottom-[10px] right-[10px] rounded-md px-[5px] py-[2px]">
                 {{ card.stars }}
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                     role="img" class="iconify iconify--ic" width="24" height="24" preserveAspectRatio="xMidYMid meet"
@@ -43,7 +43,7 @@ defineProps({
                 </svg>
             </div>
             <div v-if="!card.watched"
-                class="stars flex text-lg font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg bottom-[10px] right-[10px] rounded-md px-[5px] py-[2px]">
+                class="stars flex md:text-lg font-medium items-center bg-neutral text-neutral-content w-fit absolute shadow-lg bottom-[10px] right-[10px] rounded-md px-[5px] py-[2px]">
                 {{ $t('watching') }}
             </div>
         </div>

@@ -15,11 +15,14 @@ const video = ref(null)
 const player = ref(null)
 const loop = useState(() => false)
 const controls = useMediaControls(video)
-const { x, y, isOutside } = useMouseInElement(player)
+const { isOutside } = useMouseInElement(player)
 const { idle, lastActive } = useIdle(20 * 60)
 const chat = useState(() => [])
 const chatShow = useState(() => true)
 const chatSize = useState(() => 30)
+const chatHeight = useState(() => 30)
+const chatOpacity = useState(() => 50)
+const chatPip = useState(() => false)
 const heroku = useState(() => false)
 const markCreateModal = useState(() => false)
 const timeMarkLoaded = useState(() => false)
@@ -28,7 +31,10 @@ const { isSupported, orientation, angle, lockOrientation, unlockOrientation } = 
 const markTitle = useState(() => '')
 const twName = useCookie('tw_login')
 const { playing, buffered, currentTime, duration, tracks, waiting, selectedTrack, volume, muted, isPictureInPicture, supportsPictureInPicture, togglePictureInPicture, enableTrack, disableTrack, } = controls
-
+const chatEl = ref(null)
+const { x, y, style } = useDraggable(chatEl, {
+    initialValue: { x: 500, y: 500 },
+})
 onMounted(() => {
     const hls = new Hls()
     window.hls = hls
@@ -79,7 +85,7 @@ const changeEpisode = (id, autoplay, videoTime) => {
             if (autoplay) {
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
                     if (videoTime) document.querySelector('video').currentTime = videoTime
-                    document.querySelector('video').play() 
+                    document.querySelector('video').play()
                 })
             }
         }
@@ -105,6 +111,10 @@ watch(currentTime, (val) => {
     }))
     if (props.anime.attributes.episodes[current.value].chat && chatShow) {
         let temp = chat.value.filter(a => a.time.timesec < now)
+        if (temp.length > 200) {
+            console.log('tut')
+            temp = temp.slice(-200)
+        }
         nowChat.value = temp
         setTimeout(() => {
             if (chatShow && document.querySelector('.chat')) document.querySelector('.chat').scrollTo({ top: document.querySelector('.chat').scrollHeight })
@@ -173,7 +183,7 @@ const scruWidth = ref(null)
 const { width: timeMarksWidth } = useElementBounding(scruWidth)
 const timeMarkPosition = () => {
     let menu = document.querySelector('.video-menu')
-    if(menu) menu = "100.1%"
+    if (menu) menu = "100.1%"
     let timeMarks = document.querySelectorAll('.timeMark')
     timeMarks.forEach(m => {
         let left = calcMarkLeft(m.dataset.duration, m.dataset.time)
@@ -181,7 +191,7 @@ const timeMarkPosition = () => {
     })
     timeMarkLoaded.value = true
     setTimeout(() => {
-        if(menu) document.querySelector('.video-menu').style.width = "100%"
+        if (menu) document.querySelector('.video-menu').style.width = "100%"
     }, 100)
 }
 
@@ -257,8 +267,22 @@ const toggleFullScreen = () => {
     <div v-if="anime != null">
         <div class="mt-[10px] transition" :class="{ 'fixed left-0 top-0 mt-0 z-99 transition-all': isFullscreen }">
             <div class="outline-none relative" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
-                @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen" @keydown.а="toggleFullScreen"
-                @keydown.m="muted = !muted" @keydown.м="muted = !muted" ref="player">
+                @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen"
+                @keydown.а="toggleFullScreen" @keydown.m="muted = !muted" @keydown.м="muted = !muted" ref="player">
+
+                <div class="fixed z-[100] p-[2px] cursor-move resize bg-base-300 rounded-md flex" v-if="chatPip && chatShow" ref="chatEl"
+                    :style="style + `width: ${chatSize}%; height: ${chatHeight}%; --tw-bg-opacity: ${chatOpacity / 100};`">
+                    <div v-if="anime.attributes.episodes[current].chat != undefined"
+                        class="chat p-[10px] overflow-y-auto overflow-x-hidden flex flex-col relative transition-all right-0 w-full">
+                        <div v-for="msg in nowChat" :key="msg" class="block w-100">
+                            <span @click="openLink(`https://smotrel.net/profile/${msg.author}`)"
+                                class="font-bold cursor-pointer" :style="{ color: msg.color }">{{ msg.author
+                                }}</span>:
+                            <span class="text-white" v-html="msg.text"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="relative bg-black rounded-md shadow overflow-hidden  flex items-center"
                     :class="{ ' h-screen w-screen rounded-none': isFullscreen, 'h-[50vh] min-h-[50vh] w-100 max-h-[50vh]': !isFullscreen }">
 
@@ -267,12 +291,14 @@ const toggleFullScreen = () => {
                             class="block h-100 transition-all w-[100%]"
                             :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }"
                             @loadeddata="timeMarkPosition" :loop="loop" @ended="changeEpisode(current + 1, true)"
-                            :style="{ width: `${chatShow ? 100 - chatSize : 100}%` }" @click="playing = !playing" />
+                            :style="{ width: `${chatShow && !chatPip ? 100 - chatSize : 100}%` }" @click="playing = !playing" />
                         <div v-if="anime.attributes.episodes[current].chat != undefined"
                             class="chat p-[10px] overflow-y-auto overflow-x-hidden flex flex-col relative transition-all right-0"
-                            :style="{ width: `${chatShow ? chatSize : 0}%`, display: `${chatShow ? 'flex' : 'none'}` }">
+                            :style="{ width: `${chatShow && !chatPip ? chatSize : 0}%`, display: `${chatShow && !chatPip ? 'flex' : 'none'}` }">
                             <div v-for="msg in nowChat" :key="msg" class="block w-100">
-                                <span @click="openLink(`https://smotrel.net/profile/${msg.author}`)" class="font-bold cursor-pointer" :style="{ color: msg.color }">{{ msg.author }}</span>:
+                                <span @click="openLink(`https://smotrel.net/profile/${msg.author}`)"
+                                    class="font-bold cursor-pointer" :style="{ color: msg.color }">{{ msg.author
+                                    }}</span>:
                                 <span class="text-white" v-html="msg.text"></span>
                             </div>
                         </div>
@@ -304,7 +330,9 @@ const toggleFullScreen = () => {
                                     </label>
                                     <input class="input w-full" type="text" disabled
                                         :value="formatDuration(currentTime)">
-                                    <button @click="createMark" class="btn w-full mt-[10px] btn-primary">{{ $t('markbtn') }}</button>
+                                    <button @click="createMark" class="btn w-full mt-[10px] btn-primary">{{
+                                            $t('markbtn')
+                                    }}</button>
                                 </div>
                             </div>
                         </div>
@@ -325,7 +353,8 @@ const toggleFullScreen = () => {
                                 <div v-for="(mark, ind) in anime.attributes.timemarks.data.filter(a => a.attributes.epId == current)"
                                     :class="{ 'tooltip-open': timeMarkLoaded }"
                                     class="absolute timeMark tooltip tooltip-primary top-[24px] px-[5px] text-sm text-[rgba(0,0,0,0)] select-none"
-                                    :data-tip="mark.attributes.title" :data-duration="duration" :data-time="mark.attributes.time">{{
+                                    :data-tip="mark.attributes.title" :data-duration="duration"
+                                    :data-time="mark.attributes.time">{{
                                             mark.attributes.title
                                     }}</div>
                             </div>
@@ -338,7 +367,7 @@ const toggleFullScreen = () => {
                                 </template>
                             </VideoScrubber>
 
-                            <div class="grid grid-cols-4 md:flex md:items-center mt-[10px] gap-[10px]">
+                            <div class="grid md:flex md:items-center mt-[10px] gap-[10px]" :style="`grid-template-columns: repeat(${anime.attributes.episodes[current].chat != undefined ? 5 : 4}, minmax(0, 1fr));`">
                                 <button class="btn videoBtn" @click="playing = !playing">
                                     <svg v-if="!playing" xmlns="http://www.w3.org/2000/svg"
                                         xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
@@ -379,6 +408,111 @@ const toggleFullScreen = () => {
                                 <div class="flex-col flex-1 text-sm ml-2 text-neutral-content hidden md:flex">
                                     {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
                                 </div>
+
+                                <VideoChat v-if="anime.attributes.episodes[current].chat != undefined" class="flex">
+                                    <template #default="{ open }">
+                                        <button class="btn videoBtn" @click="open()">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+                                                class="iconify iconify--carbon" width="24" height="24"
+                                                preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+                                                <path fill="currentColor"
+                                                    d="M17.74 30L16 29l4-7h6a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9v2H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4h-4.84Z">
+                                                </path>
+                                                <path fill="currentColor" d="M8 10h16v2H8zm0 6h10v2H8z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </template>
+                                    <template #menu="{ close }">
+                                        <div
+                                            class="absolute bottom-[60px] select-none -right-[30px] md:right-0 shadow-xl p-3 bg-neutral flex flex-col gap-[10px] rounded">
+                                            <VideoMenuItem>
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                                                    role="img" class="iconify iconify--carbon" width="24" height="24"
+                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+                                                    <path fill="currentColor"
+                                                        d="M17.74 30L16 29l4-7h6a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9v2H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4h-4.84Z">
+                                                    </path>
+                                                    <path fill="currentColor" d="M8 10h16v2H8zm0 6h10v2H8z">
+                                                    </path>
+                                                </svg>
+                                                <span>{{ $t('chat') }}</span>
+                                                <input class="toggle toggle-primary" type="checkbox" v-model="chatShow">
+                                            </VideoMenuItem>
+                                            <VideoMenuItem>
+                                                <svg width="24" height="24" viewBox="0 0 21 21">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="m15.507 14.515l4-4l-4-4.015m-10 8.015l-4-4l4-4.015m13.993 4h-18" />
+                                                </svg>
+                                                <span>{{ $t('width') }}</span>
+                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                    v-model="chatSize">
+                                                    <option value="10">10%</option>
+                                                    <option value="20">20%</option>
+                                                    <option value="30">30%</option>
+                                                    <option value="40">40%</option>
+                                                    <option value="50">50%</option>
+                                                    <option value="60">60%</option>
+                                                    <option value="70">70%</option>
+                                                    <option value="80">80%</option>
+                                                    <option value="90">90%</option>
+                                                </select>
+                                            </VideoMenuItem>
+                                            <VideoMenuItem @click="chatPip = !chatPip">
+                                                <svg width="24" height="24" viewBox="0 0 32 32">
+                                                    <path fill="currentColor"
+                                                        d="M22 4v2h4.586L20 12.586L21.414 14L28 7.414V12h2V4h-8zm6 12v4a1.996 1.996 0 0 1-2 2h-6l-4 7l1.736 1l3.429-6H26a4 4 0 0 0 4-4v-4zM4 20V8a1.996 1.996 0 0 1 2-2h12V4H6a3.999 3.999 0 0 0-4 4v12a4 4 0 0 0 4 4h9v-2H6a1.996 1.996 0 0 1-2-2z" />
+                                                </svg>
+                                                <span>{{ $t('pip') }}</span>
+                                            </VideoMenuItem>
+                                            <VideoMenuItem v-if="chatPip">
+                                                <svg width="24" height="24" viewBox="0 0 21 21">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="m14.519 5.497l-4-4l-4.015 4m8.015 10l-4 4l-4.015-4m4-13.993v18" />
+                                                </svg>
+                                                <span>{{ $t('height') }}</span>
+                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                    v-model="chatHeight">
+                                                    <option value="10">10%</option>
+                                                    <option value="20">20%</option>
+                                                    <option value="30">30%</option>
+                                                    <option value="40">40%</option>
+                                                    <option value="50">50%</option>
+                                                    <option value="60">60%</option>
+                                                    <option value="70">70%</option>
+                                                    <option value="80">80%</option>
+                                                    <option value="90">90%</option>
+                                                    <option value="100">100%</option>
+                                                </select>
+                                            </VideoMenuItem>
+                                            <VideoMenuItem v-if="chatPip">
+                                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                                    <path fill="currentColor"
+                                                        d="M18 10V8h2v2h-2m0 2v-2h-2v2h2m0-4V6h-2v2h2m-2-5.16V4h2c-.63-.46-1.29-.85-2-1.16M18 4v2h2c-.58-.75-1.25-1.42-2-2m2 2v2h1.16c-.31-.71-.7-1.37-1.16-2m2 6c0-.68-.07-1.35-.2-2H20v2h2m-6-6V4h-2v2h2m0 10h2v-2h-2v2m2 2h2v-2h-2v2m-2 2h2v-2h-2v2m-2 1.8c.7-.14 1.36-.36 2-.64V20h-2v1.8m4-7.8h2v-2h-2v2m-2-6h-2v2h2V8m4 8h1.16c.28-.64.5-1.3.64-2H20v2m-4-4h-2v2h2v-2m-4 6v-2h2v-2h-2v-2h2v-2h-2V8h2V6h-2V4h2V2.2c-.65-.13-1.31-.2-2-.2C6.5 2 2 6.5 2 12s4.5 10 10 10v-2h2v-2h-2m2 0h2v-2h-2v2Z" />
+                                                </svg>
+                                                <span>{{ $t('opacity') }}</span>
+                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                    v-model="chatOpacity">
+                                                    <option value="0">0%</option>
+                                                    <option value="10">10%</option>
+                                                    <option value="20">20%</option>
+                                                    <option value="30">30%</option>
+                                                    <option value="40">40%</option>
+                                                    <option value="50">50%</option>
+                                                    <option value="60">60%</option>
+                                                    <option value="70">70%</option>
+                                                    <option value="80">80%</option>
+                                                    <option value="90">90%</option>
+                                                    <option value="100">100%</option>
+                                                </select>
+                                            </VideoMenuItem>
+                                        </div>
+                                    </template>
+                                </VideoChat>
 
                                 <VideoMenu class="flex">
                                     <template #default="{ open }">
@@ -474,7 +608,8 @@ const toggleFullScreen = () => {
                                                     </path>
                                                 </svg>
                                                 <span>{{ $t('speed') }}</span>
-                                                <select class="select select-sm bg-primary text-neutral-content" v-model="controls.rate.value">
+                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                    v-model="controls.rate.value">
                                                     <option value="3">3x</option>
                                                     <option value="2">2x</option>
                                                     <option value="1.75">1.75x</option>
@@ -483,31 +618,6 @@ const toggleFullScreen = () => {
                                                     <option value="1">1x</option>
                                                     <option value="0.75">0.75x</option>
                                                     <option value="0.5">0.5x</option>
-                                                </select>
-                                            </VideoMenuItem>
-                                            <VideoMenuItem v-if="anime.attributes.episodes[current].chat != undefined">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                                                    role="img" class="iconify iconify--carbon" width="24" height="24"
-                                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
-                                                    <path fill="currentColor"
-                                                        d="M17.74 30L16 29l4-7h6a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9v2H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4h-4.84Z">
-                                                    </path>
-                                                    <path fill="currentColor" d="M8 10h16v2H8zm0 6h10v2H8z">
-                                                    </path>
-                                                </svg>
-                                                <span>{{ $t('chat') }}</span>
-                                                <input class="toggle toggle-primary" type="checkbox" v-model="chatShow">
-                                                <select class="select select-sm bg-primary text-neutral-content" v-model="chatSize">
-                                                    <option value="10">10%</option>
-                                                    <option value="20">20%</option>
-                                                    <option value="30">30%</option>
-                                                    <option value="40">40%</option>
-                                                    <option value="50">50%</option>
-                                                    <option value="60">60%</option>
-                                                    <option value="70">70%</option>
-                                                    <option value="80">80%</option>
-                                                    <option value="90">90%</option>
                                                 </select>
                                             </VideoMenuItem>
                                         </div>

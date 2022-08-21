@@ -15,7 +15,7 @@ defineProps({
 <h1 class="font-bold text-2xl">
     {{ anime.attributes.title.split('/')[0] }}
 </h1>
-<h2 class="font-regular opacity-70 text-xl">
+<h2 class="font-regular opacity-70 md:text-xl">
     {{ getSecondTitle(anime.attributes) }} {{ `${anime.attributes.maxepisodes == 1 ?
             $t('film') : anime.attributes.nowepisode + ' ' + $t('iz') + ' ' +
             anime.attributes.maxepisodes + ' ' + $t('ep')}`

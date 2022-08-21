@@ -52,5 +52,8 @@
     "dontep2": "clear the browser CACHE and refresh the page",
     "dontep3": "and they will have to appear.",
     "warning": "Important",
-    "bugreport": "If you find a bug, write to me"
+    "bugreport": "If you find a bug, write to me",
+    "height": "Height",
+    "width": "Width",
+    "opacity": "Transparency"
 }
