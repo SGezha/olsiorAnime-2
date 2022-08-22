@@ -27,20 +27,20 @@
                     <div
                         class="px-[12px] py-[16px] mt-[20px] w-full text-sm bg-neutral shadow-lg rounded-md flex flex-col gap-[5px]">
                         <div class="text-neutral-content">
-                            <span>{{ $t('status') }}: </span>
-                            <span class="text-primary font-bold loadText">Viewed</span>
+                            <span class="opacity-60">{{ $t('status') }}: </span>
+                            <span class="font-bold loadText">Viewed</span>
                         </div>
                         <div class="text-neutral-content">
-                            <span>{{ $t('epwached') }}: </span>
-                            <span class="text-primary font-bold loadText">Suck</span>
+                            <span class="opacity-60">{{ $t('epwached') }}: </span>
+                            <span class="font-bold loadText">Suck</span>
                         </div>
                         <div class="text-neutral-content">
-                            <span>{{ $t('watcheddate') }}: </span>
-                            <span class="text-primary font-bold loadText">11.11.2001</span>
+                            <span class="opacity-60">{{ $t('watcheddate') }}: </span>
+                            <span class="font-bold loadText">11.11.2001</span>
                         </div>
                         <div class="text-neutral-content">
-                            <span>{{ $t('genres') }}: </span>
-                            <span class="text-primary font-bold loadText">Dick</span>
+                            <span class="opacity-60">{{ $t('genres') }}: </span>
+                            <span class="font-bold loadText">Dick</span>
                         </div>
                     </div>
                 </div>
