@@ -4,7 +4,8 @@
   "info": {
     "singularName": "comment",
     "pluralName": "comments",
-    "displayName": "comment"
+    "displayName": "comment",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -21,6 +22,9 @@
       "type": "string"
     },
     "img": {
+      "type": "string"
+    },
+    "twitchId": {
       "type": "string"
     }
   }

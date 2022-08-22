@@ -1,6 +1,7 @@
 <script setup>
 const twName = useCookie('tw_login')
 const twImg = useCookie('tw_img')
+const twId = useCookie('tw_id')
 const props = defineProps({
     url: {
         type: String,
@@ -28,12 +29,13 @@ const updateComments = async () => {
 const sendCom = async () => {
     if(input.value == undefined || disableCom.value) return
     disableCom.value = true
-    create('comments', { url: props.url, msg: input.value, author: twName.value, img: twImg.value }).then(async () => {
+    create('comments', { url: props.url, msg: input.value, author: twName.value, img: twImg.value, twitchId: twId.value.toString() }).then(async () => {
         input.value = ''
         await updateComments()
         disableCom.value = false
     })
 }
+
 const deleteCom = async (id) => {
     await _delete('comments', id)
     await updateComments()
@@ -66,7 +68,7 @@ const deleteCom = async (id) => {
                     new Date(com.attributes.createdAt).toLocaleTimeString() }}</div>
                 </div>
                 <div class="pt-[10px] text-neutral-content whitespace-pre-wrap w-[90%] md:w-[95%] block break-words max-h-[500px] overflow-y-auto">{{ com.attributes.msg }}</div>
-                <button v-if="com.attributes.author == twName" @click="deleteCom(com.id)"
+                <button v-if="com.attributes.twitchId == twId" @click="deleteCom(com.id)"
                     class="absolute w-[30px] h-[30px] p-[5px] bg-error flex items-center justify-center rounded-full text-white right-[20px] bottom-[20px]">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         aria-hidden="true" role="img" class="iconify iconify--mdi" preserveAspectRatio="xMidYMid meet"
