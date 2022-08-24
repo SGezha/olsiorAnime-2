@@ -6,7 +6,15 @@ module.exports = [
     config: {
       enabled: true,
       headers: '*',
-      origin: ['https://smotrel.net', 'https://olsioradmin.smotrel.net', 'http://localhost:1337', 'http://localhost:8080'],
+      origin: [
+        'https://smotrel.net',
+        'https://olsioradmin.smotrel.net',
+        'http://localhost:1337',
+        'http://localhost:8080',
+        'https://ua.smotrel.net',
+        'http://185.156.43.251',
+        'http://185.156.43.251:8080'
+      ],
       keepHeaderOnError: true,
     },
   },
