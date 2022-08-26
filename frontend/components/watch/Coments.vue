@@ -68,7 +68,7 @@ const deleteCom = async (id) => {
                     new Date(com.attributes.createdAt).toLocaleTimeString() }}</div>
                 </div>
                 <div class="pt-[10px] text-neutral-content whitespace-pre-wrap w-[90%] md:w-[95%] block break-words max-h-[500px] overflow-y-auto">{{ com.attributes.msg }}</div>
-                <button v-if="com.attributes.twitchId == twId" @click="deleteCom(com.id)"
+                <button v-if="com.attributes.twitchId != null && com.attributes.twitchId == twId" @click="deleteCom(com.id)"
                     class="absolute w-[30px] h-[30px] p-[5px] bg-error flex items-center justify-center rounded-full text-white right-[20px] bottom-[20px]">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         aria-hidden="true" role="img" class="iconify iconify--mdi" preserveAspectRatio="xMidYMid meet"
