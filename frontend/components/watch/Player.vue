@@ -136,7 +136,7 @@ const getChat = async () => {
             emotes.forEach(m => {
                 chatText = chatText.split(`${m.name}`).join(`<img class="emote" src="${m.url}">`)
             })
-            let timeStart;
+            let timeStart
             chatText.split("\r\n").forEach((text, ind) => {
                 if (ind == 0) {
                     timeStart = new Date(
@@ -152,7 +152,7 @@ const getChat = async () => {
                 ).getTime()
                 let hourDiff = timeEnd - timeStart
                 let secDiff = hourDiff / 1000
-                let result = {};
+                let result = {}
                 let message = text.split("] ")[1].split(`${text.split("] ")[1].split(":")[0]}: `).join("")
                 let author = text.split("] ")[1].split(":")[0]
                 result.time = formatTime(secDiff)
@@ -171,12 +171,12 @@ const getChat = async () => {
 }
 
 const getRandomColor = () => {
-    let letters = "0123456789ABCDEF";
-    let color = "#";
+    let letters = "0123456789ABCDEF"
+    let color = "#"
     for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
+        color += letters[Math.floor(Math.random() * 16)]
     }
-    return color;
+    return color
 }
 
 const scruWidth = ref(null)
@@ -214,7 +214,7 @@ const calcMarkLeft = (videoDuration, markTime) => {
 }
 
 const percentage = (partialValue, totalValue) => {
-    return (100 * partialValue) / totalValue;
+    return (100 * partialValue) / totalValue
 }
 
 const formatTime = (duration) => {
@@ -241,20 +241,20 @@ watch(isFullscreen, (val) => {
 const toggleFullScreen = () => {
     if (!isFullscreen.value) {
         if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
+            document.documentElement.requestFullscreen()
         } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
+            document.documentElement.webkitRequestFullscreen()
         } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
+            document.documentElement.msRequestFullscreen()
         }
         lockOrientation('landscape-primary')
     } else {
         if (document.exitFullscreen) {
-            document.exitFullscreen();
+            document.exitFullscreen()
         } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
+            document.webkitExitFullscreen()
         } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
+            document.msExitFullscreen()
         }
         lockOrientation('portrait-primary')
         unlockOrientation()
