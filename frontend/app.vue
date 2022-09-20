@@ -2,9 +2,9 @@
   <div class="">
     <div class="main-bg"></div>
     <MyNavbar />
-    <div class="">
+    <main class="">
       <NuxtPage />
-    </div>
+    </main>
   </div>
 </template>
 
