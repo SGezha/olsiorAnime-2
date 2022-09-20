@@ -13,7 +13,7 @@ const logout = () => {
 
 <template>
     <div v-if="!isFullscreen" class="bg-base-300 bg-opacity-50 z-10 relative">
-        <div ref="navbar" class="navbar max-w-[1350px] mx-auto">
+        <header ref="navbar" class="navbar max-w-[1350px] mx-auto">
             <div class="navbar-start">
                 <a class="btn btn-ghost normal-case text-xl flex gap-[10px] items-center" href="/">
                     <img src="/minloading.webp" class="rounded-full overflow-hidden" width="36" height="36" alt="logo">
@@ -65,6 +65,6 @@ const logout = () => {
                     </ul>
                 </div>
             </div>
-        </div>
+        </header>
     </div>
 </template>
