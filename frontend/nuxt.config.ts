@@ -5,7 +5,7 @@ export default defineNuxtConfig({
         '@nuxtjs/strapi',
         '@vueuse/nuxt',
         '@nuxtjs/tailwindcss',
-        '@nuxtjs/color-mode',
+        '@nuxtjs/color-mode'
     ],
     strapi: {
         url: process.env.API,
