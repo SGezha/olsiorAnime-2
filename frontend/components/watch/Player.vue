@@ -567,7 +567,7 @@ const toggleFullScreen = () => {
                                                 </svg>
                                                 <span>{{ $t('createmarkbtn') }}</span>
                                             </VideoMenuItem>
-                                            <VideoMenuItem @click="openLink(anime.attributes.episodes[current].heroku)">
+                                            <!-- <VideoMenuItem @click="openLink(anime.attributes.episodes[current].heroku)">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                                                     role="img" class="iconify iconify--ph" width="24" height="24"
@@ -594,7 +594,7 @@ const toggleFullScreen = () => {
                                                 <input class="toggle toggle-primary" type="checkbox"
                                                     @change="changeEpisode(current, true, currentTime)"
                                                     v-model="heroku">
-                                            </VideoMenuItem>
+                                            </VideoMenuItem> -->
                                             <VideoMenuItem>
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -648,7 +648,7 @@ const toggleFullScreen = () => {
             </div>
         </div>
 
-        <div class="mt-[30px]">
+        <div v-if="anime.attributes.episodes.length > 1" class="mt-[30px]">
             <div class="font-bold text-2xl">{{ $t('online') }}</div>
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 mt-[10px] w-full gap-[10px]">
                 <button v-for="(ep, ind) in anime.attributes.episodes" :key="ep.title" class="btn shadow-lg"
