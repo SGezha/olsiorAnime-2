@@ -38,6 +38,7 @@ const { x, y, style } = useDraggable(chatEl, {
 onMounted(() => {
     const hls = new Hls()
     window.hls = hls
+    window.addEventListener('keydown', (event) => keyHandler(event))
     let saved = JSON.parse(localStorage.getItem(router.currentRoute._value.params.name))
     if (props.anime != null) {
         if (Hls.isSupported()) {
@@ -52,6 +53,16 @@ onMounted(() => {
             volume.value = saved.volume
             currentTime.value = saved.time
         }
+    }
+})
+
+watch(idle, (e) => {
+    if (idle.value) {
+        if (isFullscreen.value) {
+            document.body.style.cursor = 'none'
+        }
+    } else {
+        document.body.style.cursor = 'default'
     }
 })
 
@@ -112,7 +123,6 @@ watch(currentTime, (val) => {
     if (props.anime.attributes.episodes[current.value].chat && chatShow) {
         let temp = chat.value.filter(a => a.time.timesec < now)
         if (temp.length > 200) {
-            console.log('tut')
             temp = temp.slice(-200)
         }
         nowChat.value = temp
@@ -261,16 +271,34 @@ const toggleFullScreen = () => {
     }
 }
 
+const keyHandler = (e) => {
+    if (e.keyCode == 70) {
+        toggleFullScreen()
+    }
+    if (e.keyCode == 77) {
+        muted.value = !muted.value
+    }
+    if (e.keyCode == 37) {
+        currentTime.value -= 5
+    }
+    if (e.keyCode == 39) {
+        currentTime.value += 5
+    }
+    if (e.keyCode == 32) {
+        e.preventDefault()
+        playing.value = !playing.value
+    }
+}
 </script>
 
 <template>
     <div v-if="anime != null">
         <div class="mt-[10px] transition" :class="{ 'fixed left-0 top-0 mt-0 z-99 transition-all': isFullscreen }">
-            <div class="outline-none relative" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
-                @keydown.right="currentTime += 5" @keydown.left="currentTime -= 5" @keydown.f="toggleFullScreen"
-                @keydown.а="toggleFullScreen" @keydown.m="muted = !muted" @keydown.м="muted = !muted" ref="player">
+            <div class="outline-none relative" @dblclick="toggleFullScreen" :class="{ 'h-screen w-screen': isFullscreen }" :tabindex="0" autofocus
+                ref="player">
 
-                <div class="fixed z-[100] p-[2px] cursor-move resize bg-base-300 rounded-md flex" v-if="chatPip && chatShow" ref="chatEl"
+                <div class="fixed z-[100] p-[2px] cursor-move resize bg-base-300 rounded-md flex"
+                    v-if="chatPip && chatShow" ref="chatEl"
                     :style="style + `width: ${chatSize}%; height: ${chatHeight}%; --tw-bg-opacity: ${chatOpacity / 100};`">
                     <div v-if="anime.attributes.episodes[current].chat != undefined"
                         class="chat p-[10px] overflow-y-auto overflow-x-hidden flex flex-col relative transition-all right-0 w-full">
@@ -291,7 +319,8 @@ const toggleFullScreen = () => {
                             class="block h-100 transition-all w-[100%]"
                             :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }"
                             @loadeddata="timeMarkPosition" :loop="loop" @ended="changeEpisode(current + 1, true)"
-                            :style="{ width: `${chatShow && !chatPip ? 100 - chatSize : 100}%` }" @click="playing = !playing" />
+                            :style="{ width: `${chatShow && !chatPip ? 100 - chatSize : 100}%` }"
+                            @click="playing = !playing" />
                         <div v-if="anime.attributes.episodes[current].chat != undefined"
                             class="chat p-[10px] overflow-y-auto overflow-x-hidden flex flex-col relative transition-all right-0"
                             :style="{ width: `${chatShow && !chatPip ? chatSize : 0}%`, display: `${chatShow && !chatPip ? 'flex' : 'none'}` }">
@@ -331,7 +360,7 @@ const toggleFullScreen = () => {
                                     <input class="input w-full" type="text" disabled
                                         :value="formatDuration(currentTime)">
                                     <button @click="createMark" class="btn w-full mt-[10px] btn-primary">{{
-                                            $t('markbtn')
+                                    $t('markbtn')
                                     }}</button>
                                 </div>
                             </div>
@@ -355,7 +384,7 @@ const toggleFullScreen = () => {
                                     class="absolute timeMark tooltip tooltip-primary top-[24px] px-[5px] text-sm text-[rgba(0,0,0,0)] select-none"
                                     :data-tip="mark.attributes.title" :data-duration="duration"
                                     :data-time="mark.attributes.time">{{
-                                            mark.attributes.title
+                                    mark.attributes.title
                                     }}</div>
                             </div>
 
@@ -367,7 +396,8 @@ const toggleFullScreen = () => {
                                 </template>
                             </VideoScrubber>
 
-                            <div class="grid md:flex md:items-center mt-[10px] gap-[10px]" :style="`grid-template-columns: repeat(${anime.attributes.episodes[current].chat != undefined ? 5 : 4}, minmax(0, 1fr));`">
+                            <div class="grid md:flex md:items-center mt-[10px] gap-[10px]"
+                                :style="`grid-template-columns: repeat(${anime.attributes.episodes[current].chat != undefined ? 5 : 4}, minmax(0, 1fr));`">
                                 <button class="btn videoBtn" @click="playing = !playing">
                                     <svg v-if="!playing" xmlns="http://www.w3.org/2000/svg"
                                         xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
@@ -448,7 +478,8 @@ const toggleFullScreen = () => {
                                                         d="m15.507 14.515l4-4l-4-4.015m-10 8.015l-4-4l4-4.015m13.993 4h-18" />
                                                 </svg>
                                                 <span>{{ $t('width') }}</span>
-                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                <select
+                                                    class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
                                                     v-model="chatSize">
                                                     <option value="10">10%</option>
                                                     <option value="20">20%</option>
@@ -475,7 +506,8 @@ const toggleFullScreen = () => {
                                                         d="m14.519 5.497l-4-4l-4.015 4m8.015 10l-4 4l-4.015-4m4-13.993v18" />
                                                 </svg>
                                                 <span>{{ $t('height') }}</span>
-                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                <select
+                                                    class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
                                                     v-model="chatHeight">
                                                     <option value="10">10%</option>
                                                     <option value="20">20%</option>
@@ -495,7 +527,8 @@ const toggleFullScreen = () => {
                                                         d="M18 10V8h2v2h-2m0 2v-2h-2v2h2m0-4V6h-2v2h2m-2-5.16V4h2c-.63-.46-1.29-.85-2-1.16M18 4v2h2c-.58-.75-1.25-1.42-2-2m2 2v2h1.16c-.31-.71-.7-1.37-1.16-2m2 6c0-.68-.07-1.35-.2-2H20v2h2m-6-6V4h-2v2h2m0 10h2v-2h-2v2m2 2h2v-2h-2v2m-2 2h2v-2h-2v2m-2 1.8c.7-.14 1.36-.36 2-.64V20h-2v1.8m4-7.8h2v-2h-2v2m-2-6h-2v2h2V8m4 8h1.16c.28-.64.5-1.3.64-2H20v2m-4-4h-2v2h2v-2m-4 6v-2h2v-2h-2v-2h2v-2h-2V8h2V6h-2V4h2V2.2c-.65-.13-1.31-.2-2-.2C6.5 2 2 6.5 2 12s4.5 10 10 10v-2h2v-2h-2m2 0h2v-2h-2v2Z" />
                                                 </svg>
                                                 <span>{{ $t('opacity') }}</span>
-                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                <select
+                                                    class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
                                                     v-model="chatOpacity">
                                                     <option value="0">0%</option>
                                                     <option value="10">10%</option>
@@ -530,7 +563,8 @@ const toggleFullScreen = () => {
                                     <template #menu="{ close }">
                                         <div
                                             class="absolute bottom-[60px] -right-[30px] md:right-0 shadow-xl p-3 bg-neutral flex flex-col gap-[10px] rounded">
-                                            <VideoMenuItem v-if="anime.attributes.episodes[current].tgLink" @click="openLink(anime.attributes.episodes[current].tgLink)">
+                                            <VideoMenuItem v-if="anime.attributes.episodes[current].tgLink"
+                                                @click="openLink(anime.attributes.episodes[current].tgLink)">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                                                     role="img" class="iconify iconify--ic" width="24" height="24"
@@ -608,7 +642,8 @@ const toggleFullScreen = () => {
                                                     </path>
                                                 </svg>
                                                 <span>{{ $t('speed') }}</span>
-                                                <select class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
+                                                <select
+                                                    class="select select-sm bg-base-300 bg-opacity-50 text-neutral-content"
                                                     v-model="controls.rate.value">
                                                     <option value="3">3x</option>
                                                     <option value="2">2x</option>
