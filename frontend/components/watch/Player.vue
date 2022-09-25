@@ -530,7 +530,7 @@ const toggleFullScreen = () => {
                                     <template #menu="{ close }">
                                         <div
                                             class="absolute bottom-[60px] -right-[30px] md:right-0 shadow-xl p-3 bg-neutral flex flex-col gap-[10px] rounded">
-                                            <VideoMenuItem @click="openLink(anime.attributes.episodes[current].tgLink)">
+                                            <VideoMenuItem v-if="anime.attributes.episodes[current].tgLink" @click="openLink(anime.attributes.episodes[current].tgLink)">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                                                     role="img" class="iconify iconify--ic" width="24" height="24"
