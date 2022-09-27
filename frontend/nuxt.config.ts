@@ -30,9 +30,9 @@ export default defineNuxtConfig({
     app: {
         head: {
             htmlAttrs: {
-                lang: 'ru'
+                lang: 'ua'
             },
-            title: 'Олсиор смотрит аниме',
+            title: 'Олсіор дивиться аніме',
             meta: [
                 { charset: 'utf-8' },
                 { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
