@@ -33,8 +33,8 @@ const logout = () => {
                             </path>
                         </svg>
                     </label>
-                    <ul tabindex="0" class="dropdown-content flex mt-3 p-3 shadow bg-neutral gap-3 rounded-box w-52">
-                        <SettingsSelectTheme />
+                    <ul tabindex="0" class="dropdown-content flex mt-3 p-3 shadow bg-neutral gap-3 rounded-box">
+                        <!-- <SettingsSelectTheme /> -->
                         <SettingsSelectLang />
                     </ul>
                 </div>
