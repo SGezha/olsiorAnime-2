@@ -36,7 +36,7 @@ onBeforeMount(() => {
         <div v-if="!pending && loadAnime" ref="page" class="">
             <div v-if="anime.data[0].attributes.background.data != null"
                 class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
-                <img class="w-full object-contain object-center h-[800px] max-h-[800px] bg-base-100"
+                <img class="w-full object-cover object-center h-[800px] max-h-[800px] bg-base-100"
                     :src="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" alt="">
             </div>
             <div class="max-w-[1350px] mx-auto px-[10px] pb-[50px] md:py-[20px] min-h-screen">
