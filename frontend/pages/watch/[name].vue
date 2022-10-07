@@ -36,7 +36,7 @@ onBeforeMount(() => {
         <div v-if="!pending && loadAnime" ref="page" class="">
             <div v-if="anime.data[0].attributes.background.data != null"
                 class="anime-bg w-[100%] showBg absolute top-0 left-0 -z-10">
-                <img class="w-full object-cover object-center h-[800px] max-h-[800px] bg-base-100"
+                <img class="w-full object-contain object-center h-[800px] max-h-[800px] bg-base-100"
                     :src="`${config.public.apiBase}${anime.data[0].attributes.background.data.attributes.url}`" alt="">
             </div>
             <div class="max-w-[1350px] mx-auto px-[10px] pb-[50px] md:py-[20px] min-h-screen">
@@ -46,7 +46,7 @@ onBeforeMount(() => {
                             <WatchTitle :anime="anime.data[0]" />
                         </div>
                         <img
-                            class="object-cover rounded-md w-full shadow-lg bg-base-100 min-h-[400px] max-h-[300px] md:max-h-[400px]"
+                            class="object-contain rounded-md w-full shadow-lg bg-base-100 min-h-[400px] max-h-[300px] md:max-h-[400px]"
                             :src="`${config.public.apiBase}${anime.data[0].attributes.poster.data.attributes.url}`"
                             alt="">
 
