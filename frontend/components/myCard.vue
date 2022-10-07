@@ -17,7 +17,7 @@ defineProps({
         class="w-100 relative will-change-transform transition-transform hover:scale-[102%]">
         <div class="card rounded-md">
             <figure class="w-100 h-[30vh] max-h-[250px] sm:max-h-[300px] md:max-h-[360px] md:h-[360px]">
-                <img class="w-full h-full object-cover bg-base-100" loading="lazy"
+                <img class="w-full h-full object-contain bg-base-100" loading="lazy"
                     :src="`${config.public.apiBase}${card.poster.data.attributes.url}`" />
             </figure>
             <div
