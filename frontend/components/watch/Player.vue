@@ -315,8 +315,9 @@ const keyHandler = (e) => {
                     :class="{ ' h-screen w-screen rounded-none': isFullscreen, 'h-[50vh] min-h-[50vh] w-100 max-h-[50vh]': !isFullscreen }">
 
                     <div class="w-full flex h-full relative">
+                        <h1 class="text-error w-full flex text-center items-center justify-center h-full text-lg font-bold">В настоящее время сервер не оплачен и онлайн просмотра нет на сайте, только в телеграмме :c</h1>
                         <video @keydown.prevent.space="playing = !playing" ref="video"
-                            class="block h-100 transition-all w-[100%]"
+                            class="block h-100 transition-all w-[100%] hidden"
                             :class="{ 'min-w-[70%]': !anime.attributes.episodes[current].chat == undefined }"
                             @loadeddata="timeMarkPosition" :loop="loop" @ended="changeEpisode(current + 1, true)"
                             :style="{ width: `${chatShow && !chatPip ? 100 - chatSize : 100}%` }"
