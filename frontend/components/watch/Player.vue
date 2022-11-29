@@ -601,7 +601,7 @@ const keyHandler = (e) => {
                                                 </svg>
                                                 <span>{{ $t('createmarkbtn') }}</span>
                                             </VideoMenuItem>
-                                            <!-- <VideoMenuItem @click="openLink(anime.attributes.episodes[current].heroku)">
+                                            <VideoMenuItem @click="openLink(`https://anime.smotrel.net/download?name=Олсиор смотрит - ${encodeURI(anime.attributes.title.split('/ ')[1])} ${encodeURI(anime.attributes.episodes[current].title)}&link=${encodeURI(anime.attributes.episodes[current].hls.split('https://anime.smotrel.net/')[1].split('/')).split('.').join(']')}`)">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
                                                     role="img" class="iconify iconify--ph" width="24" height="24"
@@ -612,7 +612,7 @@ const keyHandler = (e) => {
                                                 </svg>
                                                 <span>{{ $t('downloadVideo') }}</span>
                                             </VideoMenuItem>
-                                            <VideoMenuItem
+                                            <!-- <VideoMenuItem
                                                 v-if="anime.attributes.episodes[current].heroku != undefined">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
